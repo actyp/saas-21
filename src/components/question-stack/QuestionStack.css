@@ -1,0 +1,12 @@
+.question {
+    white-space: pre-line;
+}
+
+.selectable:hover {
+    background: #ffffffb0;
+    cursor: pointer;
+}
+
+.keyword {
+    background: navajowhite!important;
+}

@@ -1,0 +1,15 @@
+#filter-form input:focus {
+    box-shadow: none!important;
+}
+
+#error-date {
+    margin-left: 4rem!important;
+}
+
+#filter-form .table {
+    min-width: 50%;
+    max-width: 80%;
+    width: auto;
+    margin-left: auto;
+    margin-right: auto;
+}

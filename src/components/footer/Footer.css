@@ -1,0 +1,22 @@
+/* footer */
+footer {
+    background: rgb(197 199 183);
+}
+
+footer .copyright {
+    background: rgb(179 181 166);
+}
+
+footer .copyright a{
+    color: black;
+}
+
+footer .fas, footer .fab {
+    font-weight: 525!important;
+    color: black;
+}
+
+footer .fas:hover,
+footer .fab:hover {
+    transform: scale(1.1, 1.1);
+}
