@@ -3,6 +3,7 @@ import {Alert, Button, Form, Modal, OverlayTrigger, ToggleButton, ToggleButtonGr
 import isEmail from "validator/es/lib/isEmail";
 
 import NavBar from "./NavBar";
+import {Link} from "react-router-dom";
 
 function modalSubmit({type, email, p1, p2}) {
   console.log(type, email, p1, p2);
@@ -192,15 +193,27 @@ export default function NavBarSignedOut(props) {
 
   return (
     <NavBar brand="AskMeAnything">
-      <OverlayTrigger placement='bottom' overlay={<Tooltip id="tooltip-sign-in">Sign in / Sign up</Tooltip>}>
+      <div className="ml-auto">
+        <Link to="/">
+          <OverlayTrigger placement='bottom' overlay={<Tooltip id="tooltip-home">Home</Tooltip>}>
+            <Button
+              variant="outline-info"
+              className="shadow-none border-0 hover-to-show"
+            >
+              <i className="fas fa-home"> </i>
+            </Button>
+          </OverlayTrigger>
+        </Link>
+        <OverlayTrigger placement='bottom' overlay={<Tooltip id="tooltip-sign-in">Sign in / Sign up</Tooltip>}>
         <Button
           variant="outline-success"
-          className="ml-auto shadow-none border-0"
+          className="shadow-none border-0"
           onClick={() => setModalShow(true)}
         >
           <i className="fas fa-sign-in-alt"> </i>
         </Button>
       </OverlayTrigger>
+      </div>
       <ModalForm
         show={modalShow}
         backdrop="static"

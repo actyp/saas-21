@@ -1,10 +1,12 @@
 import NavBarSignedOut from "./components/navbar/NavBarSignedOut";
 import NavBarSignedIn from "./components/navbar/NavBarSignedIn";
 import LandingPage from "./pages/landing-page/LandingPage";
-import PersonalPage from "./pages/personal-page/PersonalPage";
+import KeywordPage from "./pages/keyword-page/KeywordPage";
+import DatePage from "./pages/date-page/DatePage";
 import AskPage from "./pages/ask-page/AskPage";
 import BrowsePage from "./pages/browse-page/BrowsePage";
-import KeywordPage from "./pages/keyword-page/KeywordPage";
+import PersonalPage from "./pages/personal-page/PersonalPage";
+import ContributionsPage from "./pages/personal-page/ContributionsPage";
 import Footer from "./components/footer/Footer";
 import {Switch, Route} from "react-router-dom";
 import {useState} from "react";
@@ -46,9 +48,9 @@ export default function App() {
             <Route exact path="/keyword">
               <KeywordPage />
             </Route>
-            {/*<Route exact path="/time">
-              <TimePage />
-            </Route>*/}
+            <Route exact path="/date">
+              <DatePage />
+            </Route>
             <Route exact path="/ask">
               <AskPage username={username}/>
             </Route>
@@ -60,10 +62,10 @@ export default function App() {
             </Route>
             {/*<Route exact path="/personal/qna">
               <QnAPage />
-            </Route>
+            </Route>*/}
             <Route exact path="/personal/contributions">
               <ContributionsPage />
-            </Route>*/}
+            </Route>
           </Switch>
       </div>
       <Footer />

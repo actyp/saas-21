@@ -14,7 +14,7 @@ export default function LandingPage(props) {
       imgSource: "https://source.unsplash.com/BXOXnQ26B7o/450x450",
       bodyTitle: "Questions per Day / Period",
       bodyText: "Check out questions per day or period in a graphical and in a tabular scheme.",
-      footerHref: "/time",
+      footerHref: "/date",
       btnDisabled: false,
       btnText: "Show me the statistics"
     },
