@@ -1,6 +1,7 @@
 import {useState} from "react";
 import {Alert, Button, Col, Row, Table} from "react-bootstrap";
 import Paginate from "../paginate/Paginate";
+import "./ChartTemplate.css";
 import {
   Area,
   AreaChart,

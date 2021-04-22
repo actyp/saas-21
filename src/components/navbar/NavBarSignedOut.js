@@ -1,9 +1,8 @@
-import {useState} from "react";
 import {Alert, Button, Form, Modal, OverlayTrigger, ToggleButton, ToggleButtonGroup, Tooltip} from "react-bootstrap";
 import isEmail from "validator/es/lib/isEmail";
-
-import NavBar from "./NavBar";
 import {Link} from "react-router-dom";
+import {useState} from "react";
+import NavBar from "./NavBar";
 
 function modalSubmit({type, email, p1, p2}) {
   console.log(type, email, p1, p2);
