@@ -6,6 +6,7 @@ import DatePage from "./pages/date-page/DatePage";
 import AskPage from "./pages/ask-page/AskPage";
 import BrowsePage from "./pages/browse-page/BrowsePage";
 import PersonalPage from "./pages/personal-page/PersonalPage";
+import QnAPage from "./pages/personal-page/qna-page/QnAPage";
 import ContributionsPage from "./pages/personal-page/ContributionsPage";
 import Footer from "./components/footer/Footer";
 import {Switch, Route} from "react-router-dom";
@@ -60,9 +61,9 @@ export default function App() {
             <Route exact path="/personal">
               <PersonalPage />
             </Route>
-            {/*<Route exact path="/personal/qna">
+            <Route exact path="/personal/qna">
               <QnAPage />
-            </Route>*/}
+            </Route>
             <Route exact path="/personal/contributions">
               <ContributionsPage />
             </Route>

@@ -79,12 +79,16 @@ function AskForm(props) {
               </InputGroup.Prepend>
               <Form.Control
                 placeholder="Question;related;keywords;tags"
-                onChange={e => props.setKeywords(e.target.value === "" ? [] : e.target.value.split(';'))}
+                onChange={e => props.setKeywords(
+                  e.target.value === "" ? [] : e.target.value.split(';').map(k => k.toLowerCase()))}
               />
             </InputGroup>
             <Form.Text className="text-muted ml-5">
               Separate keywords with semicolon ( ; )
               <span className="text-danger ml-2">{error['keywords']}</span>
+            </Form.Text>
+            <Form.Text className="text-muted ml-5">
+              Keywords are stored in lowercase.
             </Form.Text>
           </Form.Group>
         </Col>
@@ -124,7 +128,7 @@ function Preview(props) {
   let formData = {
     title: "Question heading / title",
     text: "Question text",
-    keywords: ["Question", "related", "keywords", "tags"]
+    keywords: ["question", "related", "keywords", "tags"]
   }
 
   for(const v in formData) {
@@ -139,6 +143,7 @@ function Preview(props) {
     props.show &&
     <Col md={5} className="mx-auto mt-4 px-1">
       <QuestionStack
+        scrollToTop="unset"
         questionList={questionList}
         selected={0}
         setSelected={() => null}

@@ -6,6 +6,7 @@ import "./QuestionStack.css";
  *        id : int, selected : int (selected question id), setSelected : function
  */
 function Question(props) {
+
   const keywords = props.keywords.map((k,i) =>
     k && <Badge key={`keyword-${i}`} variant="light" className="keyword mr-2">{k}</Badge>
   );
@@ -32,11 +33,24 @@ function Question(props) {
 
 /*
  * props: questionList : list with question objects {id, title, text, keywords, username, date}
- *        selected : int (question id) setSelected : function to alter selected prop
+ *        selected : int (question id)
+ *        setSelected : function to alter selected prop
+ *        scrollToTop : 'auto' | 'smooth' | 'unset'
  */
 export default function QuestionStack(props) {
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: props.scrollToTop
+    });
+  }
+
   const selected = props.selected;
-  const setSelected = props.setSelected;
+  const setSelected = (qId) => {
+    if (props.scrollToTop !== "unset") scrollToTop();
+    return props.setSelected(qId);
+  }
 
   const questions = props.questionList.map((props,ix) =>
     <Question

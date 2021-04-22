@@ -63,9 +63,6 @@ export default function BrowsePage(props) {
   };
 
   const onClear = () => {
-    setDateFrom("");
-    setDateTo("");
-    setKeywords([]);
     setCurrentQList(wholeQList);
   };
 
@@ -112,6 +109,7 @@ export default function BrowsePage(props) {
         )
       }
       <QuestionStack
+        scrollToTop="auto"
         questionList={currentQPage}
         selected={selected}
         setSelected={setSelected}
