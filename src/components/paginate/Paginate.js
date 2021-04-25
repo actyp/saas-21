@@ -1,6 +1,14 @@
 import ReactPaginate from 'react-paginate';
 import "./Paginate.css";
 
+/*
+ * props:
+ *  pageCount : int (max number of pages)
+ *  setCurrentPageNum : int
+ *  scrollToTop : boolean (scroll after page change)
+ *  resetSelectedPage : boolean (force reset)
+ *  setResetSelectedPage : int (force reset to selected page)
+ */
 export default function Paginate(props) {
 
   const scrollToTop = () => {
@@ -24,7 +32,7 @@ export default function Paginate(props) {
       forcePage={props.resetSelectedPage ? 0 : undefined}
       onPageChange={(e) => {
         props.setResetSelectedPage(false);
-        props.setCurrentPage(e.selected);
+        props.setCurrentPageNum(e.selected);
         props.scrollToTop && scrollToTop();
       }}
     />

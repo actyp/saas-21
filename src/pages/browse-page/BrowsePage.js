@@ -1,81 +1,78 @@
+import {QuestionStack, Paginate, Loading} from "../../components";
 import FilterForm from "./filter-form/FilterForm";
-import QuestionStack from "../../components/question-stack/QuestionStack";
 import AnswerPage from "./answer-page/AnswerPage";
-import Paginate from "../../components/paginate/Paginate";
 import {Col, Button, Alert} from "react-bootstrap";
+import {allQuestions, useFetchDataOnMount} from "../../services/api";
 import {useState} from "react";
+import {useAuth} from "../../services/auth";
 
-function questionFeed() {
-  let qL = [];
-  for(let id=1; id<=100; id++){
-    qL.push(
-      {
-        id: id,
-        title: "Question heading / title" + id,
-        text: "Question text",
-        keywords: id % 2 === 0 ? ["Question"] : ["related"],
-        username: "username",
-        date: "Jan 05 2021 04:20"
-      },
-      {
-        id: (200-id),
-        title: "Question heading / title" + (200-id),
-        text: "Question text",
-        keywords: (200-id) % 2 === 0 ? ["keywords"] : ["tags"],
-        username: "username",
-        date: "Jan 15 2021 04:20"
-      }
-    );
-  }
 
-  return qL;
-}
-
-export default function BrowsePage(props) {
+export default function BrowsePage() {
+  // filter-form state
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
   const [keywords, setKeywords] = useState([]);
+  // question selected (selected = question id | null)
   const [selected, setSelected] = useState(null);
-  const [currentPage, setCurrentPage] = useState(0);
+  // all fetched questions
+  const [allQList, setAllQList] = useState([]);
+  // current question list: all or filtered
+  const [currentQList, setCurrentQList] = useState([]);
+  // current page number 0, 1, 2, ...
+  const [currentPageNum, setCurrentPageNum] = useState(0);
+  // reset current page number on filter
   const [resetSelectedPage, setResetSelectedPage] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [mounted, setMounted] = useState(true);
+  const auth = useAuth();
 
-  const wholeQList = questionFeed();
-  const [currentQList, setCurrentQList] = useState(wholeQList);
-
-  const onFilter = () => {
-    let filtered = [];
-
-    if(keywords.length !== 0){
-      const isFilteredKeyword = (k) => keywords.includes(k);
-      filtered = wholeQList.filter(q => q.keywords.some(isFilteredKeyword));
+  useFetchDataOnMount(
+    {
+      asyncFetch: allQuestions,
+      mounted: mounted,
+      setMounted: setMounted,
+      dataState: allQList,
+      setDataState: setAllQList,
+      setLoading: setLoading,
+      afterFunc: setCurrentQList
     }
-
-    if(dateFrom !== "" && dateTo !== ""){
-      const isBetweenDates = (d) => new Date(dateFrom) <= new Date(d) && new Date(d) <= new Date(dateTo);
-      filtered = (filtered.length > 0 ? filtered : wholeQList).filter(q => isBetweenDates(q.date));
-    }
-
-    if(filtered.length > 0) {
-      setCurrentQList(filtered);
-      setCurrentPage(0);
-      setResetSelectedPage(true);
-    }
-  };
-
-  const onClear = () => {
-    setCurrentQList(wholeQList);
-  };
+  );
 
   const paginate = () => {
     const questionsPerPage = 10;
-    const offset = currentPage * questionsPerPage;
+    const offset = currentPageNum * questionsPerPage;
     const pageCount = Math.ceil(currentQList.length / questionsPerPage);
     const currentQPage = currentQList.slice(offset, offset + questionsPerPage);
     return [pageCount, currentQPage];
   };
   const [pageCount, currentQPage] = paginate();
 
-  const alterView = (all, sin, sel) => selected === null ? (props.isSignedIn ? sin : all) : sel;
+  const onFilter = () => {
+    let filtered = [];
+
+    if(keywords.length !== 0){
+      const isFilteredKeyword = (k) => keywords.includes(k);
+      filtered = allQList.filter(q => q.keywords.some(isFilteredKeyword));
+    }
+
+    if(dateFrom !== "" && dateTo !== ""){
+      const isBetweenDates = (d) => new Date(dateFrom) <= new Date(d) && new Date(d) <= new Date(dateTo);
+      filtered = (filtered.length > 0 ? filtered : allQList).filter(q => isBetweenDates(q.date));
+    }
+
+    if(filtered.length > 0) {
+      setCurrentQList(filtered);
+      setCurrentPageNum(0);
+      setResetSelectedPage(true);
+    }
+  };
+
+  const onClear = () => {
+    setCurrentQList(allQList);
+  };
+
+  const alterView = (all, sin, sel) =>
+    selected === null ? (auth.user ? sin : all) : sel;
 
   return (
     <Col md={5} className="mx-auto mt-4 px-1">
@@ -108,33 +105,31 @@ export default function BrowsePage(props) {
           </Button>
         )
       }
-      <QuestionStack
-        scrollToTop="auto"
-        questionList={currentQPage}
-        selected={selected}
-        setSelected={setSelected}
-      />
-      { alterView(
-          <Alert
-            variant="success"
-            className="mt-3 text-center"
-          >
-            <h4>Sign in to view more questions</h4>
-          </Alert>,
-          <Paginate
-            pageCount={pageCount}
-            setCurrentPage={setCurrentPage}
-            scrollToTop={true}
-            resetSelectedPage={resetSelectedPage}
-            setResetSelectedPage={setResetSelectedPage}
-          />,
-          <AnswerPage
-            isSignedIn={props.isSignedIn}
-            username={props.username}
-            questionId={selected}
-          />
-        )
-      }
+      <Loading loading={loading} text="Loading answers...">
+        <QuestionStack
+          scrollToTop="auto"
+          questionList={currentQPage}
+          selected={selected}
+          setSelected={setSelected}
+        />
+        { alterView(
+            <Alert
+              variant="success"
+              className="mt-3 text-center"
+            >
+              <h4>Sign in to view more questions</h4>
+            </Alert>,
+            <Paginate
+              pageCount={pageCount}
+              setCurrentPageNum={setCurrentPageNum}
+              scrollToTop={true}
+              resetSelectedPage={resetSelectedPage}
+              setResetSelectedPage={setResetSelectedPage}
+            />,
+            <AnswerPage questionId={selected} />
+          )
+        }
+      </Loading>
     </Col>
   );
 }

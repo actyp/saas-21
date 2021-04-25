@@ -1,35 +1,13 @@
-import {useState} from "react";
 import {Alert, Button, Form, InputGroup} from "react-bootstrap";
-import AnswerStack from "../../../components/answer-stack/AnswerStack";
+import {AnswerStack, Loading} from "../../../components";
+import {answersPerQuestionId, submitAnswer, useFetchDataOnMount} from "../../../services/api";
+import {useAuth} from "../../../services/auth";
+import {useState} from "react";
 import "./AnswerPage.css";
-
-function answerFeed(qId) {
-  const answers = [
-    {
-      text: "Answer text for id: " + qId,
-      username: "username",
-      date: "date"
-    },
-    {
-      text: "Answer text for id: " + qId,
-      username: "username",
-      date: "date"
-    },
-    {
-      text: "Answer text for id: " + qId,
-      username: "username",
-      date: "date"
-    }
-  ];
-  return answers;
-}
-
-function submitAnswer(data) {
-  return data.text === "true";
-}
 
 function AnswerForm(props) {
   const [error, setError] = useState({});
+  const auth = useAuth();
 
   const formValid = () => {
     let valid = true;
@@ -55,7 +33,7 @@ function AnswerForm(props) {
             </InputGroup.Prepend>
             <Form.Control
               as="textarea" rows={3} cols={120}
-              disabled={!props.isSignedIn}
+              disabled={!auth.user}
               placeholder="Write your answer here..."
               onChange={e => props.setText(e.target.value)}
             />
@@ -67,10 +45,10 @@ function AnswerForm(props) {
         <Form.Group>
           <Button
             variant="success"
-            disabled={!props.isSignedIn}
+            disabled={!auth.user}
             onClick={() => formValid() && props.onSubmit()}
           >
-            {props.isSignedIn ? "Submit Answer" : "Sign in to submit your answer"}
+            {auth.user ? "Submit Answer" : "Sign in to submit your answer"}
           </Button>
         </Form.Group>
         <Alert
@@ -90,28 +68,44 @@ function AnswerForm(props) {
 }
 
 export default function AnswerPage(props) {
-  const answers = answerFeed(props.questionId);
-  const [answerList, setAnswerList] = useState(answers);
+  const [answerList, setAnswerList] = useState([]);
   const [text, setText] = useState("");
   const [failedSubmit, setFailedSubmit] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [mounted, setMounted] = useState(true);
+  const auth = useAuth();
+
+  useFetchDataOnMount(
+    {
+      asyncFetch: () => answersPerQuestionId(props.questionId),
+      mounted: mounted,
+      setMounted: setMounted,
+      dataState: answerList,
+      setDataState: setAnswerList,
+      setLoading: setLoading
+    }
+  );
 
   const onSubmit = () => {
     const newAnswer = {
-      text:text,
-      username: props.username,
-      date:Date().slice(3,21)
+      text: text,
+      username: auth.user.username
     };
 
-    if(!submitAnswer(newAnswer)) {
-      setFailedSubmit(true);
-    } else {
-      setAnswerList([...answerList, newAnswer]);
-      setFailedSubmit(false);
-    }
+    submitAnswer(newAnswer).then(ans => {
+      if (mounted) {
+        if (ans === null) {
+          setFailedSubmit(true);
+        } else {
+          setAnswerList([...answerList, ans]);
+          setFailedSubmit(false);
+        }
+      }
+    });
   };
 
   return (
-    <>
+    <Loading loading={loading} text="Loading answers...">
       <h4 className="mt-3 text-info">
         {answerList.length + " " + (answerList.length === 1 ? "Answer" : "Answers")}
       </h4>
@@ -119,13 +113,12 @@ export default function AnswerPage(props) {
       <AnswerStack answerList={answerList} />
       <hr />
       <AnswerForm
-        isSignedIn={props.isSignedIn}
         text={text}
         setText={setText}
         failedSubmit={failedSubmit}
         setFailedSubmit={setFailedSubmit}
         onSubmit={onSubmit}
       />
-    </>
+    </Loading>
   );
 }

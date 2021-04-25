@@ -1,12 +1,9 @@
 import {Alert, Button, Col, Form, InputGroup} from "react-bootstrap";
-import QuestionStack from "../../components/question-stack/QuestionStack";
-import {useState} from "react";
+import {QuestionStack} from "../../components";
+import {useEffect, useState} from "react";
+import {useAuth} from "../../services/auth";
+import {askQuestion} from "../../services/api";
 import "./AskPage.css";
-
-function submitQuestion(data) {
-  console.log('Submit question:', data);
-  return data['title'] === "true";
-}
 
 function AskForm(props) {
   const [error, setError] = useState({});
@@ -107,15 +104,15 @@ function AskForm(props) {
             className="mb-0 mt-4"
             id="alert-box"
             dismissible
-            show={props.failedSubmit.show}
-            variant={props.failedSubmit.value ? "danger" : "success"}
-            onClose={() => props.setFailedSubmit({...props.failedSubmit, show: false})}
+            show={props.submitStatus.show}
+            variant={props.submitStatus.value ? "success" : "danger"}
+            onClose={() => props.setSubmitStatus({...props.submitStatus, show: false})}
           >
             <h5>
-              Submit {props.failedSubmit.value ? "Failed" : "Successful"}
+              Submit {props.submitStatus.value ? "Successful" : "Failed"}
             </h5>
             <p className="m-0">
-              {props.failedSubmit.value ? "Please try again." : "Question added to 'My Questions'."}
+              {props.submitStatus.value ? "Question added to 'My Questions'." : "Please try again."}
             </p>
           </Alert>
         </Col>
@@ -152,25 +149,39 @@ function Preview(props) {
   );
 }
 
-export default function AskPage(props) {
+export default function AskPage() {
   const [title, setTitle] = useState("");
   const [text, setText] = useState("");
   const [keywords, setKeywords] = useState([]);
   const [showPreview, setShowPreview] = useState(false);
-  const [failedSubmit, setFailedSubmit] = useState({value: false, show: false});
+  const [submitStatus, setSubmitStatus] = useState({value: false, show: false});
+  const [mounted, setMounted] = useState(true);
+  const auth = useAuth();
 
-  const togglePreview = () => setShowPreview(!showPreview);
+  // set mounted to true on mount and false on unmount
+  // state update under mounted condition prevents
+  // state update on unmounted component
+  useEffect(() => {
+    setMounted(true);
+    return () => setMounted(false);
+  }, []);
+
   const onSubmit = () => {
     const data = {
       title:title,
       text:text,
       keywords:keywords,
-      username: props.username,
-      date:Date().slice(3,21)
+      username: auth.user.username
     };
-   const failedSubmit = !submitQuestion(data);
-   setFailedSubmit({value: failedSubmit, show: true});
+
+    askQuestion(data).then(status => {
+      if (mounted) {
+        setSubmitStatus({value: status, show: true});
+      }
+    });
   };
+
+  const togglePreview = () => setShowPreview(!showPreview);
 
   return (
     <>
@@ -179,14 +190,14 @@ export default function AskPage(props) {
         text={text} setText={setText}
         keywords={keywords} setKeywords={setKeywords}
         onSubmit={onSubmit}
-        failedSubmit={failedSubmit}
-        setFailedSubmit={setFailedSubmit}
+        submitStatus={submitStatus}
+        setSubmitStatus={setSubmitStatus}
         preview = {{show: showPreview, toggle:togglePreview}}
       />
       <Preview
         show={showPreview}
         formData={{title: title, text: text, keywords: keywords}}
-        username={props.username}
+        username={auth.user.username}
       />
     </>
   );

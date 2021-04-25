@@ -215,7 +215,7 @@ export default function ChartTemplate(props) {
               </Table>
               <Paginate
                 pageCount={pageCount}
-                setCurrentPage={setCurrentTablePage}
+                setCurrentPageNum={setCurrentTablePage}
                 scrollToTop={false}
                 resetSelectedPage={false}
                 setResetSelectedPage={() => null}

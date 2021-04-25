@@ -1,6 +1,9 @@
-import BodyCards from "../../components/body-cards/BodyCards";
+import {BodyCards} from "../../components";
+import {useAuth} from "../../services/auth";
 
-export default function LandingPage(props) {
+export default function LandingPage() {
+  const auth = useAuth();
+
   const cardList = [
     {
       imgSource: "https://source.unsplash.com/7PYqjNzvrc4/450x450",
@@ -22,9 +25,9 @@ export default function LandingPage(props) {
       imgSource: "https://source.unsplash.com/i--IN3cvEjg/450x450",
       bodyTitle: "Ask a Question",
       bodyText: "You are free to ask any question, anytime.",
-      footerHref: props.isSignedIn ? "/ask" : "/",
-      btnDisabled: !props.isSignedIn,
-      btnText: props.isSignedIn ? "Ask a question" : "Sign in to ask a question"
+      footerHref: auth.user !== null ? "/ask" : "/",
+      btnDisabled: !auth.user,
+      btnText: auth.user ? "Ask a question" : "Sign in to ask a question"
     },
     {
       imgSource: "https://source.unsplash.com/_gEKtyIbRSM/450x450",
@@ -32,7 +35,7 @@ export default function LandingPage(props) {
       bodyText: "You are free to browse and answer any question.",
       footerHref: "/browse",
       btnDisabled: false,
-      btnText: props.isSignedIn ? "Browse and Answer a question" : "Browse questions (sign in to answer)"
+      btnText: auth.user ? "Browse and Answer a question" : "Browse questions (sign in to answer)"
     }
   ];
 

@@ -1,26 +1,13 @@
 import {Alert, Button, Form, Modal, OverlayTrigger, ToggleButton, ToggleButtonGroup, Tooltip} from "react-bootstrap";
 import isEmail from "validator/es/lib/isEmail";
 import {Link} from "react-router-dom";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import NavBar from "./NavBar";
-
-function modalSubmit({type, email, p1, p2}) {
-  console.log(type, email, p1, p2);
-  if(type === "Sign in") {
-    return {username: "actyp@home.gr", token: "token"};
-  }
-  if (type === "Sign up") {
-    return null;
-  }
-  return null;
-}
+import {useAuth} from "../../services/auth";
 
 /*
- * Modal props: show, backdrop, keyboard
+ * Modal props: show, backdrop, keyboard, onExited
  * Form  props: onHide, onSubmit, failedSubmit
- * Validation through formValidation(), which
- * validates email using browser built-in function
- * and passwords manually
  */
 function ModalForm(props){
   const [type, setType] = useState("Sign in");
@@ -66,9 +53,12 @@ function ModalForm(props){
     return valid;
   }
 
-  const modalProps = {...props};
-  delete modalProps.onSubmit;
-  delete modalProps.failedSubmit;
+  const modalProps = {
+    show: props.show,
+    backdrop: props.backdrop,
+    keyboard: props.keyboard,
+    onExited: reset
+  };
 
   return (
     <Modal {...modalProps} size="md">
@@ -148,7 +138,7 @@ function ModalForm(props){
           <div className="d-flex justify-content-center">
             <Button
               variant="info" className="mx-1 shadow-none"
-              onClick={() => formValid() && props.onSubmit({type: type, email: email, p1: p1, p2: p2})}
+              onClick={() => formValid() && props.onSubmit({type: type, email: email, password: p1})}
             >
               {type}
             </Button>
@@ -160,6 +150,10 @@ function ModalForm(props){
             </Button>
           </div>
         </Form>
+        <Alert variant="success" className="mb-0 mt-3" show={props.successSignUp}>
+          <h5>Sign up successful</h5>
+          <p className="m-0">You can now sign in.</p>
+        </Alert>
         <Alert variant="danger" className="mb-0 mt-3" show={props.failedSubmit.value}>
           <h5>{props.failedSubmit.type} Failed</h5>
           <p className="m-0">Please try again.</p>
@@ -172,22 +166,47 @@ function ModalForm(props){
 /*
  * props: modalShow, setModalShow, onSubmit, failedSubmit
  */
-export default function NavBarSignedOut(props) {
+export default function NavBarSignedOut() {
   const [modalShow, setModalShow] = useState(false);
-  const [failedSubmit, setFailedSubmit] = useState({type:"", value:false});
+  const [successSignUp, setSuccessSignUp] = useState(false);
+  const [failedSubmit, setFailedSubmit] = useState({type: "", value:false});
+  const [mounted, setMounted] = useState(true);
+  const auth = useAuth();
 
-  const onSubmit = (formInfo) => {
-    const resp = modalSubmit(formInfo);
-    if (resp !== null) {
-      props.setUsername(resp.username);
-      setModalShow(false);
-      setFailedSubmit({type:"", value:false});
-      props.setIsSignedIn(true);
-    } else {
-      props.setUsername("");
-      setFailedSubmit({type: formInfo.type, value:true});
-      setTimeout(() => setFailedSubmit({type:formInfo.type, value:false}), 1500);
+  // set mounted to true on mount and false on unmount
+  // state update under mounted condition prevents
+  // state update on unmounted component
+  useEffect(() => {
+    setMounted(true);
+    return () => setMounted(false);
+  }, []);
+
+  // state update under mounted condition
+  const onSubmit = ({type, email, password}) => {
+    const command = {
+      "Sign in": auth.signin,
+      "Sign up": auth.signup
+    };
+
+    const toggle_delayed = (f1, f2) => {
+      f1() ; setTimeout(() => f2(), 1500)
     }
+
+    //remove password for failure
+    command[type](email, password).then(resp => {
+      if (mounted && resp === null) {
+        toggle_delayed(
+          () => setFailedSubmit({type: type, value: true}),
+          () => setFailedSubmit({type: type, value: false})
+        );
+      }
+      else if (mounted && type === "Sign up") {
+        toggle_delayed(
+          () => setSuccessSignUp(true),
+          () => {setSuccessSignUp(false) ; setModalShow(false)}
+        );
+      }
+    });
   };
 
   return (
@@ -220,6 +239,7 @@ export default function NavBarSignedOut(props) {
         onHide={() => setModalShow(false)}
         onSubmit={onSubmit}
         failedSubmit={failedSubmit}
+        successSignUp={successSignUp}
       />
     </NavBar>
   );

@@ -1,20 +1,26 @@
-import ChartTemplate from "../../components/chart-template/ChartTemplate";
+import {ChartTemplate, Loading} from "../../components";
+import {questionsPerKeyword, useFetchDataOnMount} from "../../services/api";
+import {useState} from "react";
 
-function getData() {
-  let data = [];
-  for (let i=1; i<=200; i++) {
-    data.push({
-        'keyword': `k-${i}`,
-        'questions': Math.ceil(Math.random()*1000)
-      })
-  }
-  return data;
-}
 
 export default function KeywordPage() {
-  const data = getData();
+  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState([]);
+  const [mounted, setMounted] = useState(true);
+
+  useFetchDataOnMount(
+    {
+      asyncFetch: questionsPerKeyword,
+      mounted: mounted,
+      setMounted: setMounted,
+      dataState: data,
+      setDataState: setData,
+      setLoading: setLoading
+    }
+  );
+
   return (
-    <>
+    <Loading loading={loading} text="Loading questions per keyword...">
       <h3 className="text-center mb-4">Questions per Keyword</h3>
       <ChartTemplate
         mainChart = 'bar'
@@ -23,6 +29,6 @@ export default function KeywordPage() {
         data = {data}
         table = {{keyHeading : 'Keyword', valueHeading : ['Questions tagged']}}
       />
-    </>
+    </Loading>
   );
 }

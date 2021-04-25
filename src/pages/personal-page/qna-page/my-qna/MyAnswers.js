@@ -1,59 +1,57 @@
-import AnswerStack from "../../../../components/answer-stack/AnswerStack";
-import {useState} from "react";
+import {AnswerStack, Loading} from "../../../../components";
 import QuestionColumn from "./QuestionColumn";
-
-function QnAFeed() {
-  let qnaL = [];
-  for(let id=1; id<=50; id++){
-    qnaL.push(
-      {
-        q: {
-          id: id,
-          title: "Question heading / title" + id,
-          text: "Question text",
-          keywords: id % 2 === 0 ? ["Question"] : ["related"],
-          username: "username",
-          date: "Jan 05 2021 04:20"
-        },
-        a: {
-          text: "Answer text for question: " + id,
-          username: "me",
-          date: "date"
-        }
-      }
-    );
-  }
-
-  return qnaL;
-}
+import {answerPerQuestionPerUserId, useFetchDataOnMount} from "../../../../services/api";
+import {useAuth} from "../../../../services/auth";
+import {useState} from "react";
 
 function AnswerPerQuestion(props) {
   return (
     <>
       <hr/>
-      <AnswerStack answerList={[props.answer_obj[`${props.selected}`]]}/>
+      <AnswerStack answerList={[props.ansObj[`${props.questionId}`]]}/>
     </>
   );
 }
 
 export default function MyAnswers() {
   const [selected, setSelected] = useState(null);
-  const QnAObj = QnAFeed();
+  const [qnaObjList, setQnaObjList] = useState([]);
+  const [ansObj, setAnsObj] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [mounted, setMounted] = useState(true);
+  const auth = useAuth();
 
-  let answer_obj= {}
-  for (const obj of QnAObj) {
-    answer_obj[`${obj.q.id}`] = obj.a;
-  }
+  const fillAnsObj = (qnaList) => {
+    let ansObj = {}
+    for (const obj of qnaList) {
+      ansObj[`${obj.question.id}`] = obj.answer;
+    }
+    setAnsObj(ansObj);
+  };
 
-  return(
-    <QuestionColumn
-      title="My Answers"
-      backBtnText="View all answered questions"
-      questions={QnAObj.map(obj => obj.q)}
-      selected={selected}
-      setSelected={setSelected}
-    >
-      <AnswerPerQuestion answer_obj={answer_obj} selected={selected}/>
-    </QuestionColumn>
+  useFetchDataOnMount(
+    {
+      asyncFetch: () => answerPerQuestionPerUserId(auth.user.id),
+      mounted: mounted,
+      setMounted: setMounted,
+      dataState: qnaObjList,
+      setDataState: setQnaObjList,
+      setLoading: setLoading,
+      afterFunc: fillAnsObj
+    }
   );
-}
+
+  return (
+    <Loading loading={loading} text="Loading answered questions">
+      <QuestionColumn
+        title="My Answers"
+        backBtnText="View all answered questions"
+        questions={qnaObjList.map(obj => obj.question)}
+        selected={selected}
+        setSelected={setSelected}
+      >
+        <AnswerPerQuestion ansObj={ansObj} questionId={selected}/>
+      </QuestionColumn>
+    </Loading>
+  );
+}  

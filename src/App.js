@@ -1,50 +1,33 @@
-import NavBarSignedOut from "./components/navbar/NavBarSignedOut";
-import NavBarSignedIn from "./components/navbar/NavBarSignedIn";
-import LandingPage from "./pages/landing-page/LandingPage";
-import KeywordPage from "./pages/keyword-page/KeywordPage";
-import DatePage from "./pages/date-page/DatePage";
-import AskPage from "./pages/ask-page/AskPage";
-import BrowsePage from "./pages/browse-page/BrowsePage";
-import PersonalPage from "./pages/personal-page/PersonalPage";
-import QnAPage from "./pages/personal-page/qna-page/QnAPage";
-import ContributionsPage from "./pages/personal-page/ContributionsPage";
-import Footer from "./components/footer/Footer";
+import {NavBarSignedOut, NavBarSignedIn, PrivateRoute, Footer} from "./components";
+import {ProvideAuth, useAuth} from "./services/auth";
 import {Switch, Route} from "react-router-dom";
-import {useState} from "react";
 import "./App.css";
+import {
+  LandingPage,
+  KeywordPage,
+  DatePage,
+  BrowsePage,
+  AskPage,
+  PersonalPage,
+  QnAPage,
+  ContributionsPage
+} from "./pages";
 
-function NavBarOI(props) {
+function NavBarOI() {
+  const auth = useAuth();
   return (
-    !props.isSignedIn
-      ? <NavBarSignedOut {...props.navSignedOutProps}/>
-      : <NavBarSignedIn {...props.navSignedInProps}/>
+    auth.user === null ? <NavBarSignedOut /> : <NavBarSignedIn />
   );
 }
 
 export default function App() {
-  const [isSignedIn, setIsSignedIn] = useState(false);
-  const [username, setUsername] = useState("");
-
-  const navSignedOutProps = {
-    setUsername: setUsername,
-    setIsSignedIn: setIsSignedIn
-  };
-  const navSignedInProps = {
-    setIsSignedIn:setIsSignedIn,
-    username: username,
-    setUsername: setUsername
-  };
-
   return (
-    <>
-      <NavBarOI isSignedIn={isSignedIn}
-                navSignedOutProps={navSignedOutProps}
-                navSignedInProps={navSignedInProps}
-      />
+    <ProvideAuth>
+      <NavBarOI />
       <div id="content" className="container-fluid">
           <Switch>
             <Route exact path="/">
-              <LandingPage isSignedIn={isSignedIn}/>
+              <LandingPage />
             </Route>
             <Route exact path="/keyword">
               <KeywordPage />
@@ -52,24 +35,26 @@ export default function App() {
             <Route exact path="/date">
               <DatePage />
             </Route>
-            <Route exact path="/ask">
-              <AskPage username={username}/>
-            </Route>
             <Route exact path="/browse">
-              <BrowsePage isSignedIn={isSignedIn} username={username}/>
+              <BrowsePage />
             </Route>
-            <Route exact path="/personal">
-              <PersonalPage />
-            </Route>
-            <Route exact path="/personal/qna">
-              <QnAPage />
-            </Route>
-            <Route exact path="/personal/contributions">
-              <ContributionsPage />
-            </Route>
+            <PrivateRoute>
+              <Route exact path="/ask">
+                <AskPage />
+              </Route>
+              <Route exact path="/personal">
+                <PersonalPage />
+              </Route>
+              <Route exact path="/personal/qna">
+                <QnAPage />
+              </Route>
+              <Route exact path="/personal/contributions">
+                <ContributionsPage />
+              </Route>
+            </PrivateRoute>
           </Switch>
       </div>
       <Footer />
-    </>
+    </ProvideAuth>
   );
 }

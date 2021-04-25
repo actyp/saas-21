@@ -1,12 +1,11 @@
+import {Button, OverlayTrigger, Tooltip} from "react-bootstrap";
 import NavBar from "./NavBar";
-import Button from "react-bootstrap/Button";
-import {OverlayTrigger, Tooltip} from "react-bootstrap";
 import {Link} from "react-router-dom";
+import {useAuth} from "../../services/auth";
 
-/*
- * props: setIsSignedIn, username, setUsername
- */
 export default function NavBarSignedIn(props) {
+  const auth = useAuth();
+
   return(
     <NavBar brand="AskMeAnything">
       <div className="mx-auto">
@@ -62,7 +61,7 @@ export default function NavBarSignedIn(props) {
         </OverlayTrigger>
       </Link>
       <Link to="/personal">
-        <OverlayTrigger placement='bottom' overlay={<Tooltip id="tooltip-personal">{props.username}</Tooltip>}>
+        <OverlayTrigger placement='bottom' overlay={<Tooltip id="tooltip-personal">{auth.user.username}</Tooltip>}>
           <Button
             variant="outline-primary"
             className="shadow-none border-0"
@@ -76,10 +75,7 @@ export default function NavBarSignedIn(props) {
           <Button
             variant="outline-danger"
             className="shadow-none border-0"
-            onClick={() => {
-              props.setIsSignedIn(false);
-              props.setUsername("");
-            }}
+            onClick={() => auth.signout()}
           >
             <i className="fas fa-sign-out-alt"> </i>
           </Button>

@@ -1,4 +1,4 @@
-import BodyCards from "../../components/body-cards/BodyCards";
+import {BodyCards} from "../../components";
 
 export default function PersonalPage() {
   const cardList = [
