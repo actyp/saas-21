@@ -1,6 +1,6 @@
 import {NavBarSignedOut, NavBarSignedIn, PrivateRoute, Footer} from "./components";
 import {ProvideAuth, useAuth} from "./services/auth";
-import {Switch, Route} from "react-router-dom";
+import {Switch, Route, BrowserRouter} from "react-router-dom";
 import "./App.css";
 import {
   LandingPage,
@@ -12,6 +12,7 @@ import {
   QnAPage,
   ContributionsPage
 } from "./pages";
+import React from "react";
 
 function NavBarOI() {
   const auth = useAuth();
@@ -22,39 +23,41 @@ function NavBarOI() {
 
 export default function App() {
   return (
-    <ProvideAuth>
-      <NavBarOI />
-      <div id="content" className="container-fluid">
-          <Switch>
-            <Route exact path="/">
-              <LandingPage />
-            </Route>
-            <Route exact path="/keyword">
-              <KeywordPage />
-            </Route>
-            <Route exact path="/date">
-              <DatePage />
-            </Route>
-            <Route exact path="/browse">
-              <BrowsePage />
-            </Route>
-            <PrivateRoute>
-              <Route exact path="/ask">
-                <AskPage />
+    <BrowserRouter>
+      <ProvideAuth>
+        <NavBarOI />
+        <div id="content" className="container-fluid">
+            <Switch>
+              <Route exact path="/">
+                <LandingPage />
               </Route>
-              <Route exact path="/personal">
-                <PersonalPage />
+              <Route exact path="/keyword">
+                <KeywordPage />
               </Route>
-              <Route exact path="/personal/qna">
-                <QnAPage />
+              <Route exact path="/date">
+                <DatePage />
               </Route>
-              <Route exact path="/personal/contributions">
-                <ContributionsPage />
+              <Route exact path="/browse">
+                <BrowsePage />
               </Route>
-            </PrivateRoute>
-          </Switch>
-      </div>
-      <Footer />
-    </ProvideAuth>
+              <PrivateRoute>
+                <Route exact path="/ask">
+                  <AskPage />
+                </Route>
+                <Route exact path="/personal">
+                  <PersonalPage />
+                </Route>
+                <Route exact path="/personal/qna">
+                  <QnAPage />
+                </Route>
+                <Route exact path="/personal/contributions">
+                  <ContributionsPage />
+                </Route>
+              </PrivateRoute>
+            </Switch>
+        </div>
+        <Footer />
+      </ProvideAuth>
+    </BrowserRouter>
   );
 }

@@ -1,4 +1,4 @@
-import {AnswerStack, Loading} from "../../../../components";
+import {AnswerStack, LoadingHandler} from "../../../../components";
 import QuestionColumn from "./QuestionColumn";
 import {answerPerQuestionPerUserId, useFetchDataOnMount} from "../../../../services/api";
 import {useAuth} from "../../../../services/auth";
@@ -21,12 +21,14 @@ export default function MyAnswers() {
   const [mounted, setMounted] = useState(true);
   const auth = useAuth();
 
-  const fillAnsObj = (qnaList) => {
-    let ansObj = {}
-    for (const obj of qnaList) {
-      ansObj[`${obj.question.id}`] = obj.answer;
+  const fillAnsObj = (qnaObjList) => {
+    if (qnaObjList) {
+      let ansObj = {}
+      for (const obj of qnaObjList) {
+        ansObj[`${obj.question.id}`] = obj.answer;
+      }
+      setAnsObj(ansObj);
     }
-    setAnsObj(ansObj);
   };
 
   useFetchDataOnMount(
@@ -41,17 +43,21 @@ export default function MyAnswers() {
     }
   );
 
+  const questions = qnaObjList ? qnaObjList.map(obj => obj.question) : [];
+
   return (
-    <Loading loading={loading} text="Loading answered questions">
-      <QuestionColumn
-        title="My Answers"
-        backBtnText="View all answered questions"
-        questions={qnaObjList.map(obj => obj.question)}
-        selected={selected}
-        setSelected={setSelected}
-      >
-        <AnswerPerQuestion ansObj={ansObj} questionId={selected}/>
-      </QuestionColumn>
-    </Loading>
+    <>
+      <h3 className="text-center mb-4">My Answers</h3>
+      <LoadingHandler data={qnaObjList} loading={loading} text="Loading answered questions">
+        <QuestionColumn
+          backBtnText="View all answered questions"
+          questions={questions}
+          selected={selected}
+          setSelected={setSelected}
+        >
+          <AnswerPerQuestion ansObj={ansObj} questionId={selected}/>
+        </QuestionColumn>
+      </LoadingHandler>
+    </>
   );
 }  

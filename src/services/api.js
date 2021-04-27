@@ -257,15 +257,15 @@ export function useFetchDataOnMount(
 {
   useEffect(() => {
     setMounted(true);
-    if (dataState.length === 0) {
+    if (!dataState || !dataState.length) {
       asyncFetch().then(data => {
         if (mounted) {
           setDataState(data);
           setLoading(false);
-          if(afterFunc) afterFunc(data);
+          if(afterFunc && data !== null) afterFunc(data);
         }
       });
     }
     return () => setMounted(false);
-  }, [asyncFetch, mounted, setMounted, dataState.length, setDataState, setLoading, afterFunc]);
+  }, []);
 }

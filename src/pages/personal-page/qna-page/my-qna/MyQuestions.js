@@ -1,4 +1,4 @@
-import {AnswerStack,Loading} from "../../../../components";
+import {AnswerStack,LoadingHandler} from "../../../../components";
 import QuestionColumn from "./QuestionColumn";
 import {answersPerQuestionId, questionsPerUserId, useFetchDataOnMount} from "../../../../services/api";
 import {useAuth} from "../../../../services/auth";
@@ -21,13 +21,13 @@ function AnswersPerQuestion(props) {
   );
 
   return(
-    <Loading loading={loading} text="Loading answers..." >
+    <LoadingHandler data={answerList} loading={loading} text="Loading answers..." >
       <h4 className="mt-3 text-info">
         {answerList.length + " " + (answerList.length === 1 ? "Answer" : "Answers")}
       </h4>
       <hr/>
       <AnswerStack answerList={answerList}/>
-    </Loading>
+    </LoadingHandler>
   );
 }
 
@@ -50,16 +50,18 @@ export default function MyQuestions() {
   );
 
   return(
-    <Loading loading={loading} text="Loading my questions..." >
-      <QuestionColumn
-          title="My Questions"
-          backBtnText="View all questions"
-          questions={questions}
-          selected={selected}
-          setSelected={setSelected}
-      >
-          <AnswersPerQuestion questionId={selected}/>
-      </QuestionColumn>
-    </Loading>
+    <>
+      <h3 className="text-center mb-4">My Questions</h3>
+      <LoadingHandler data={questions} loading={loading} text="Loading my questions..." >
+        <QuestionColumn
+            backBtnText="View all questions"
+            questions={questions}
+            selected={selected}
+            setSelected={setSelected}
+        >
+            <AnswersPerQuestion questionId={selected}/>
+        </QuestionColumn>
+      </LoadingHandler>
+    </>
   );
 }

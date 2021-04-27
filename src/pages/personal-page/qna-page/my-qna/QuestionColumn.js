@@ -7,17 +7,18 @@ export default function QuestionColumn(props) {
   const questions = props.questions;
 
   const paginate = () => {
-    const questionsPerPage = 10;
-    const offset = currentPageNum * questionsPerPage;
-    const pageCount = Math.ceil(questions.length / questionsPerPage);
-    const currentQPage = questions.slice(offset, offset + questionsPerPage);
-    return [pageCount, currentQPage];
+    if (questions) {
+      const questionsPerPage = 10;
+      const offset = currentPageNum * questionsPerPage;
+      const pageCount = Math.ceil(questions.length / questionsPerPage);
+      const currentQPage = questions.slice(offset, offset + questionsPerPage);
+      return [pageCount, currentQPage];
+    } else return [0 ,[]];
   };
   const [pageCount, currentQPage] = paginate();
 
   return (
     <>
-      <h3 className="text-center mb-4">{props.title}</h3>
       {props.selected !== null &&
       <Button variant="light" className="mb-2" onClick={() => props.setSelected(null)}>
         <i className="fas fa-arrow-alt-circle-left"> {props.backBtnText} </i>

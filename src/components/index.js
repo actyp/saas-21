@@ -2,7 +2,7 @@ export {default as AnswerStack} from "./answer-stack/AnswerStack";
 export {default as BodyCards} from "./body-cards/BodyCards";
 export {default as ChartTemplate} from "./chart-template/ChartTemplate";
 export {default as Footer} from "./footer/Footer";
-export {default as Loading} from "./loading/Loading";
+export {default as LoadingHandler} from "./loading-handler/LoadingHandler";
 export {default as NavBarSignedIn} from "./navbar/NavBarSignedIn";
 export {default as NavBarSignedOut} from "./navbar/NavBarSignedOut";
 export {default as Paginate} from "./paginate/Paginate";

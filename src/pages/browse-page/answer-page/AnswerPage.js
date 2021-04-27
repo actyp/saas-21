@@ -1,5 +1,5 @@
 import {Alert, Button, Form, InputGroup} from "react-bootstrap";
-import {AnswerStack, Loading} from "../../../components";
+import {AnswerStack, LoadingHandler} from "../../../components";
 import {answersPerQuestionId, submitAnswer, useFetchDataOnMount} from "../../../services/api";
 import {useAuth} from "../../../services/auth";
 import {useState} from "react";
@@ -67,6 +67,14 @@ function AnswerForm(props) {
   );
 }
 
+function AnswerCount(props) {
+  return (
+    <h4 className="mt-3 text-info">
+      {props.answerList.length + " " + (props.answerList.length === 1 ? "Answer" : "Answers")}
+    </h4>
+  );
+}
+
 export default function AnswerPage(props) {
   const [answerList, setAnswerList] = useState([]);
   const [text, setText] = useState("");
@@ -105,12 +113,12 @@ export default function AnswerPage(props) {
   };
 
   return (
-    <Loading loading={loading} text="Loading answers...">
-      <h4 className="mt-3 text-info">
-        {answerList.length + " " + (answerList.length === 1 ? "Answer" : "Answers")}
-      </h4>
-      <hr />
-      <AnswerStack answerList={answerList} />
+    <>
+      <LoadingHandler data={answerList} loading={loading} text="Loading answers...">
+        <AnswerCount answerList={answerList} />
+        <hr />
+        <AnswerStack answerList={answerList} />
+      </LoadingHandler>
       <hr />
       <AnswerForm
         text={text}
@@ -119,6 +127,6 @@ export default function AnswerPage(props) {
         setFailedSubmit={setFailedSubmit}
         onSubmit={onSubmit}
       />
-    </Loading>
+    </>
   );
 }

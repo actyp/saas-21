@@ -1,4 +1,4 @@
-import {ChartTemplate, Loading} from "../../components";
+import {ChartTemplate, LoadingHandler} from "../../components";
 import {dailyContributionsPerUserId, useFetchDataOnMount} from "../../services/api";
 import {useAuth} from "../../services/auth";
 import {useState} from "react";
@@ -22,15 +22,17 @@ export default function ContributionsPage() {
   );
 
   return (
-    <Loading loading={loading} text="Loading daily contributions...">
+    <>
       <h3 className="text-center mb-4">My daily contributions</h3>
-      <ChartTemplate
-        mainChart = 'bar'
-        secChart = 'radar'
-        obj = {{key: 'date', value: ['questions', 'answers']}}
-        data = {data}
-        table = {{keyHeading : 'Date', valueHeading : ['Questions posted', 'Answers posted']}}
-      />
-    </Loading>
+      <LoadingHandler data={data} loading={loading} text="Loading daily contributions...">
+        <ChartTemplate
+          mainChart = 'bar'
+          secChart = 'radar'
+          obj = {{key: 'date', value: ['questions', 'answers']}}
+          data = {data}
+          table = {{keyHeading : 'Date', valueHeading : ['Questions posted', 'Answers posted']}}
+        />
+      </LoadingHandler>
+    </>
   );
 }

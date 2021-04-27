@@ -1,5 +1,5 @@
 import {useState} from "react";
-import {Alert, Button, Col, Row, Table} from "react-bootstrap";
+import {Button, Col, Row, Table} from "react-bootstrap";
 import Paginate from "../paginate/Paginate";
 import "./ChartTemplate.css";
 import {
@@ -135,11 +135,13 @@ export default function ChartTemplate(props) {
   const allData = props.data;
 
   const paginate = () => {
-    const itemsPerPage = 15;
-    const offset = currentTablePage * itemsPerPage;
-    const pageCount = Math.ceil(allData.length / itemsPerPage);
-    const currentTPage = allData.slice(offset, offset + itemsPerPage);
-    return [pageCount, currentTPage];
+    if (allData) {
+      const itemsPerPage = 15;
+      const offset = currentTablePage * itemsPerPage;
+      const pageCount = Math.ceil(allData.length / itemsPerPage);
+      const currentTPage = allData.slice(offset, offset + itemsPerPage);
+      return [pageCount, currentTPage];
+    } else return [0, []];
   };
   const [pageCount, currentTPage] = paginate();
 
@@ -187,43 +189,35 @@ export default function ChartTemplate(props) {
 
   return (
     <>
-      {allData.length === 0
-        ?<Alert variant="danger" className="mx-auto mt-5 w-25">
-          <Alert.Heading>Something Went Wrong...</Alert.Heading>
-          <p>Please try again later.</p>
-        </Alert>
-        :<>
-          <ResponsiveContainer width="100%" minHeight="75vh">
-            {mainChart}
+      <ResponsiveContainer width="100%" minHeight="75vh">
+        {mainChart}
+      </ResponsiveContainer>
+      <p className="text-center text-info">
+        <span>Slide the edges to focus on specific region.</span>
+        <Button variant="outline-info" className="btn-sm ml-3 shadow-none" onClick={() => setIsSynced(!isSynced)}>
+          {isSynced ? 'Show all' : 'Sync to table'}
+        </Button>
+      </p>
+      <Row className="mt-4">
+        <Col>
+          <ResponsiveContainer minWidth="100%" height="100%">
+            {secChart}
           </ResponsiveContainer>
-          <p className="text-center text-info">
-            <span>Slide the edges to focus on specific region.</span>
-            <Button variant="outline-info" className="btn-sm ml-3 shadow-none" onClick={() => setIsSynced(!isSynced)}>
-              {isSynced ? 'Show all' : 'Sync to table'}
-            </Button>
-          </p>
-          <Row className="mt-4">
-            <Col>
-              <ResponsiveContainer minWidth="100%" height="100%">
-                {secChart}
-              </ResponsiveContainer>
-            </Col>
-            <Col>
-              <Table striped borderless hover size="sm" className="mx-auto w-50 text-center">
-                <thead>{tableHead}</thead>
-                <tbody>{tableRows}</tbody>
-              </Table>
-              <Paginate
-                pageCount={pageCount}
-                setCurrentPageNum={setCurrentTablePage}
-                scrollToTop={false}
-                resetSelectedPage={false}
-                setResetSelectedPage={() => null}
-              />
-            </Col>
-          </Row>
-        </>
-      }
+        </Col>
+        <Col>
+          <Table striped borderless hover size="sm" className="mx-auto w-50 text-center">
+            <thead>{tableHead}</thead>
+            <tbody>{tableRows}</tbody>
+          </Table>
+          <Paginate
+            pageCount={pageCount}
+            setCurrentPageNum={setCurrentTablePage}
+            scrollToTop={false}
+            resetSelectedPage={false}
+            setResetSelectedPage={() => null}
+          />
+        </Col>
+      </Row>
     </>
   );
 }

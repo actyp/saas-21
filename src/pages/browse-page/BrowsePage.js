@@ -1,4 +1,4 @@
-import {QuestionStack, Paginate, Loading} from "../../components";
+import {QuestionStack, Paginate, LoadingHandler} from "../../components";
 import FilterForm from "./filter-form/FilterForm";
 import AnswerPage from "./answer-page/AnswerPage";
 import {Col, Button, Alert} from "react-bootstrap";
@@ -39,11 +39,13 @@ export default function BrowsePage() {
   );
 
   const paginate = () => {
-    const questionsPerPage = 10;
-    const offset = currentPageNum * questionsPerPage;
-    const pageCount = Math.ceil(currentQList.length / questionsPerPage);
-    const currentQPage = currentQList.slice(offset, offset + questionsPerPage);
-    return [pageCount, currentQPage];
+    if (currentQList) {
+      const questionsPerPage = 10;
+      const offset = currentPageNum * questionsPerPage;
+      const pageCount = Math.ceil(currentQList.length / questionsPerPage);
+      const currentQPage = currentQList.slice(offset, offset + questionsPerPage);
+      return [pageCount, currentQPage];
+    } else return [0, []];
   };
   const [pageCount, currentQPage] = paginate();
 
@@ -105,7 +107,7 @@ export default function BrowsePage() {
           </Button>
         )
       }
-      <Loading loading={loading} text="Loading answers...">
+      <LoadingHandler data={allQList} loading={loading} text="Loading answers...">
         <QuestionStack
           scrollToTop="auto"
           questionList={currentQPage}
@@ -129,7 +131,7 @@ export default function BrowsePage() {
             <AnswerPage questionId={selected} />
           )
         }
-      </Loading>
+      </LoadingHandler>
     </Col>
   );
 }
