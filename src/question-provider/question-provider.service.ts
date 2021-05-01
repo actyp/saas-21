@@ -49,30 +49,27 @@ export class QuestionProviderService {
   async questions(data: any) {
     if (data.stop === undefined) {
       data.stop = -1;
+    } else {
+      data.stop = parseInt(data.stop);
     }
-    if (
-      data.start === undefined ||
-      !Number.isInteger(data.start) ||
-      !Number.isInteger(data.stop)
-    ) {
+
+    if (data.start === undefined) {
       return this.status_code[400];
     }
 
-    return JSON.stringify(
-      await Promise.all(
-        (
-          await this.redisClient.lrange('questions', data.start, data.stop)
-        ).map((question_id) => this.get_question(question_id)),
-      ),
+    data.start = parseInt(data.start);
+
+    return await Promise.all(
+      (
+        await this.redisClient.lrange('questions', data.start, data.stop)
+      ).map((question_id) => this.get_question(question_id)),
     );
   }
 
   async my_questions(data: any) {
-    return JSON.stringify(
-      await Promise.all(
-        (
-          await this.redisClient.zrange(data.username + ':questions', 0, -1)
-        ).map(async (question_id) => await this.get_question(question_id)),
+    return await Promise.all(
+      (await this.redisClient.zrange(data.username + ':questions', 0, -1)).map(
+        async (question_id) => await this.get_question(question_id),
       ),
     );
   }
@@ -104,7 +101,7 @@ export class QuestionProviderService {
       });
     }
 
-    return JSON.stringify(re);
+    return re;
   }
 
   async answers_per_question(data: any) {
@@ -112,58 +109,48 @@ export class QuestionProviderService {
       return this.status_code[400];
     }
 
-    return JSON.stringify(
-      await Promise.all(
-        (
-          await this.redisClient.smembers(
-            'question:' + data.question_id + ':answers',
-          )
-        ).map(async (answer_id) => await this.get_answer(answer_id)),
-      ),
+    return await Promise.all(
+      (
+        await this.redisClient.smembers(
+          'question:' + data.question_id + ':answers',
+        )
+      ).map(async (answer_id) => await this.get_answer(answer_id)),
     );
   }
 
   async question_per_keyword_count() {
-    return JSON.stringify(
-      Object.entries(await this.redisClient.hgetall('keywords')).reduce<
-        Record<string, any>
-      >((acc, curr) => {
-        acc[curr[0]] = parseInt(curr[1]);
-        return acc;
-      }, {}),
-    );
+    return Object.entries(await this.redisClient.hgetall('keywords')).reduce<
+      Record<string, any>
+    >((acc, curr) => {
+      acc[curr[0]] = parseInt(curr[1]);
+      return acc;
+    }, {});
   }
 
   async question_per_date_count() {
-    return JSON.stringify(
-      Object.entries(await this.redisClient.hgetall('questions:dates')).reduce<
-        Record<string, any>
-      >(async (acc, curr) => {
-        acc[curr[0]] = parseInt(curr[1]);
-        return acc;
-      }, {}),
-    );
+    return Object.entries(
+      await this.redisClient.hgetall('questions:dates'),
+    ).reduce<Record<string, any>>(async (acc, curr) => {
+      acc[curr[0]] = parseInt(curr[1]);
+      return acc;
+    }, {});
   }
 
   async my_question_per_date_count(data: any) {
-    return JSON.stringify(
-      Object.entries(
-        await this.redisClient.hgetall(data.username + ':questions:dates'),
-      ).reduce<Record<string, any>>(async (acc, curr) => {
-        acc[curr[0]] = parseInt(curr[1]);
-        return acc;
-      }, {}),
-    );
+    return Object.entries(
+      await this.redisClient.hgetall(data.username + ':questions:dates'),
+    ).reduce<Record<string, any>>(async (acc, curr) => {
+      acc[curr[0]] = parseInt(curr[1]);
+      return acc;
+    }, {});
   }
 
   async my_answer_per_date_count(data: any) {
-    return JSON.stringify(
-      Object.entries(
-        await this.redisClient.hgetall(data.username + ':answers:dates'),
-      ).reduce<Record<string, any>>(async (acc, curr) => {
-        acc[curr[0]] = parseInt(curr[1]);
-        return acc;
-      }, {}),
-    );
+    return Object.entries(
+      await this.redisClient.hgetall(data.username + ':answers:dates'),
+    ).reduce<Record<string, any>>(async (acc, curr) => {
+      acc[curr[0]] = parseInt(curr[1]);
+      return acc;
+    }, {});
   }
 }
