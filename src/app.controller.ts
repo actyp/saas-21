@@ -107,12 +107,11 @@ export class AppController {
   }
 
   @Post('logout')
-  async logout(@Body() body, @Request() req, @Res() res) {
-    body.refresh_token = req.cookies.refresh_token;
+  async logout(@Request() req, @Res() res) {
     return this.client_send(
       this.auth_client,
       res,
-      body,
+      { refresh_token: req.cookies.refresh_token },
       'logout',
       this.respond,
     );
