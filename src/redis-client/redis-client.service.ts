@@ -10,10 +10,6 @@ export class RedisClientService {
     this._client = this.redisService.getClient();
   }
 
-  async getClient(): Promise<Redis.Redis> {
-    return this.redisService.getClient();
-  }
-
   async hgetall(key: string): Promise<Record<string, any>> {
     return this._client.hgetall(key);
   }
