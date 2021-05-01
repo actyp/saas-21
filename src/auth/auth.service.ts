@@ -29,17 +29,19 @@ export class AuthService {
   }
 
   async jwt_guard(data: any) {
-    const jwt_decoded: any = await this.jwtService.decode(data.refresh_token);
-    if (jwt_decoded === null) {
+    try {
+      this.jwtService.verify(data.refresh_token);
+    } catch (error) {
       throw new Error('Unauthorized');
     }
 
+    const jwt_decoded: any = this.jwtService.decode(data.refresh_token);
     const user = await this.redisClient.hgetall(jwt_decoded.username);
-    if (Object.keys(user).length == 0) {
-      throw new Error('Unauthorized');
-    }
 
-    if (user.refresh_token !== data.refresh_token) {
+    if (
+      Object.keys(user).length == 0 ||
+      user.refresh_token !== data.refresh_token
+    ) {
       throw new Error('Unauthorized');
     }
 
