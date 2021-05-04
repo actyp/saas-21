@@ -130,7 +130,7 @@ export class QuestionProviderService {
   async question_per_date_count() {
     return Object.entries(
       await this.redisClient.hgetall('questions:dates'),
-    ).reduce<Record<string, any>>(async (acc, curr) => {
+    ).reduce<Record<string, any>>((acc, curr) => {
       acc[curr[0]] = parseInt(curr[1]);
       return acc;
     }, {});
@@ -139,7 +139,7 @@ export class QuestionProviderService {
   async my_question_per_date_count(data: any) {
     return Object.entries(
       await this.redisClient.hgetall(data.username + ':questions:dates'),
-    ).reduce<Record<string, any>>(async (acc, curr) => {
+    ).reduce<Record<string, any>>((acc, curr) => {
       acc[curr[0]] = parseInt(curr[1]);
       return acc;
     }, {});
@@ -148,7 +148,7 @@ export class QuestionProviderService {
   async my_answer_per_date_count(data: any) {
     return Object.entries(
       await this.redisClient.hgetall(data.username + ':answers:dates'),
-    ).reduce<Record<string, any>>(async (acc, curr) => {
+    ).reduce<Record<string, any>>((acc, curr) => {
       acc[curr[0]] = parseInt(curr[1]);
       return acc;
     }, {});
