@@ -94,7 +94,7 @@ export class QuestionManagementService {
       return this.status_code[500];
     }
 
-    return this.status_code[200];
+    return this.status_code[201];
   }
 
   async create_answer(data: any) {
@@ -140,6 +140,6 @@ export class QuestionManagementService {
       return this.status_code[500];
     }
 
-    return this.status_code[200];
+    return this.status_code[201];
   }
 }
