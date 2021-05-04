@@ -35,7 +35,7 @@ export class QuestionProviderService {
     return question;
   }
 
-  async get_answer(answer_id: string) {
+  async get_answer(answer_id: string, include_question_id = true) {
     const [username, date] = this.decode_id(answer_id);
 
     const answer = await this.redisClient.hgetall('answer:' + answer_id);
@@ -43,6 +43,9 @@ export class QuestionProviderService {
     answer.id = answer_id;
     answer.username = username;
     answer.date = date;
+    if (!include_question_id) {
+      delete answer.question_id;
+    }
     return answer;
   }
 
@@ -114,7 +117,7 @@ export class QuestionProviderService {
         await this.redisClient.smembers(
           'question:' + data.question_id + ':answers',
         )
-      ).map(async (answer_id) => await this.get_answer(answer_id)),
+      ).map(async (answer_id) => await this.get_answer(answer_id, false)),
     );
   }
 
