@@ -67,7 +67,6 @@ export class AppController {
       res.cookie('refresh_token', this.microservice_response.refresh_token, {
         httpOnly: true,
         secure: true,
-        maxAge: 5400 * 1000,
       });
       delete this.microservice_response.refresh_token;
       res.status(HttpStatus.OK).json(this.microservice_response).send();
