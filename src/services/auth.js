@@ -1,5 +1,5 @@
 import React, {useState, useContext, createContext} from "react";
-import {baseInstance} from './api';
+import {apiInstance} from './api';
 
 const authContext = createContext({});
 
@@ -13,40 +13,66 @@ export const useAuth = () => {
 
 /*
  * Provider hook that creates auth object
- * and handles state changes
+ * and provides auth functions
  */
 function useProvideAuth() {
   const [user, setUser] = useState(null);
+  const [token, setToken] = useState(null);
 
   const signin = (email, password) => {
-    return baseInstance
-      .post('api/login', {email, password})
+    return apiInstance()
+      .post('login', {email, password})
       .then(resp => {
-        setUser({...resp.data, username:'actyp@home.gr', id: 1});
-        return resp.data;})
-      .catch(err => {
-        console.log(err);
+        const username = resp.data['username'].split('@')[0];
+        setUser({username: username});
+        setToken(resp.data['access_token']);
+        return true;
+      }).catch(err => {
+        //log err if possible
         return null;
       });
   };
 
   const signup = (email, password) => {
-    return baseInstance
-      .post('api/register', {email, password})
-      .then(resp => resp.data)
+    return apiInstance()
+      .post('signup', {email, password})
+      .then(() => true)
       .catch(err => {
-        console.log(err);
+        //log err if possible
         return null;
       });
   };
 
   const signout = () => {
-    setUser(null);
-    return true;
+    return apiInstance()
+      .post('logout', {})
+      .then(() => {
+        setToken(null);
+        setUser(null);
+        return true;
+      }).catch(err => {
+        //log err if possible
+        return null;
+      });
+  };
+
+  const refreshToken = () => {
+    return apiInstance()
+      .get('refresh')
+      .then(resp => {
+        setToken(resp.data['access_token']);
+        const waitTime = resp.data['access_token_expiry'] - new Date().getTime() - 1000;
+        setTimeout(refreshToken, waitTime);
+        return resp.data.token;
+      }).catch(err => {
+        //log err if possible
+        return null;
+      });
   };
 
   return {
     user,
+    tokenObj: {token, refreshToken},
     signin,
     signup,
     signout

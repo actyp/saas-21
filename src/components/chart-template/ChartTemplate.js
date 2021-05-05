@@ -96,8 +96,8 @@ function pieChartSec(props) {
       <Pie data={data} dataKey={props.obj.value[0]} nameKey={props.obj.key} cx="60%" cy="48%"
            paddingAngle={3} innerRadius={180} outerRadius={250} fill="#8884d8"
       >
-        <LabelList dataKey={props.obj.key} position="outside" clockWise={true}/>
-        <Label value="In sync with table" position="center"/>
+        <LabelList dataKey={props.obj.key} position="outside" clockWise='2' stroke="#8884d8"/>
+        <Label value="In sync with table" position="center" stroke="#8884d8"/>
       </Pie>
       <Tooltip />
     </PieChart>

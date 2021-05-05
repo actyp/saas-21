@@ -9,7 +9,7 @@ function Answer(props) {
     <ListGroup.Item className="overflow-auto">
       <p> {props.text} </p>
       <div className="mt-2 text-info text-right">
-        answered by <b> {props.username} </b> on {props.date}
+        answered by <b> {props.username} </b> on {String(new Date(props.date)).slice(4,21)}
       </div>
     </ListGroup.Item>
   );

@@ -96,16 +96,20 @@ export default function AnswerPage(props) {
 
   const onSubmit = () => {
     const newAnswer = {
-      text: text,
-      username: auth.user.username
+      text: text
     };
 
-    submitAnswer(newAnswer).then(ans => {
+    submitAnswer(newAnswer, auth.tokenObj).then(date => {
       if (mounted) {
-        if (ans === null) {
+        if (date === null) {
           setFailedSubmit(true);
         } else {
-          setAnswerList([...answerList, ans]);
+          const answer = {
+            text: text,
+            username: auth.user.username,
+            date: date
+          };
+          setAnswerList([...answerList, answer]);
           setFailedSubmit(false);
         }
       }

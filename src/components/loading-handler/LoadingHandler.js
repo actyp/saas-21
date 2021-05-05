@@ -17,7 +17,7 @@ function EmptyResp() {
   );
 }
 
-function NullResp() {
+function ErrorResp() {
   return(
     <Alert variant="danger" className="mx-auto mt-5 w-50">
       <Alert.Heading>Something Went Wrong...</Alert.Heading>
@@ -28,8 +28,8 @@ function NullResp() {
 
 export default function LoadingHandler(props) {
   const handleCase = (data) => {
-    if (data === null)
-      return  <NullResp />;
+    if (data === undefined || data === null)
+      return  <ErrorResp />;
     else if (data.length === 0)
       return <EmptyResp />;
     else return props.children;

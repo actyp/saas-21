@@ -1,6 +1,6 @@
 import {AnswerStack,LoadingHandler} from "../../../../components";
 import QuestionColumn from "./QuestionColumn";
-import {answersPerQuestionId, questionsPerUserId, useFetchDataOnMount} from "../../../../services/api";
+import {answersPerQuestionId, myQuestions, useFetchDataOnMount} from "../../../../services/api";
 import {useAuth} from "../../../../services/auth";
 import {useState} from "react";
 
@@ -40,7 +40,7 @@ export default function MyQuestions() {
 
   useFetchDataOnMount(
     {
-      asyncFetch: () => questionsPerUserId(auth.user.id),
+      asyncFetch: () => myQuestions(auth.tokenObj),
       mounted: mounted,
       setMounted: setMounted,
       dataState: questions,

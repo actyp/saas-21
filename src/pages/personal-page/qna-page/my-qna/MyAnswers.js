@@ -1,6 +1,6 @@
 import {AnswerStack, LoadingHandler} from "../../../../components";
 import QuestionColumn from "./QuestionColumn";
-import {answerPerQuestionPerUserId, useFetchDataOnMount} from "../../../../services/api";
+import {myAnswers, useFetchDataOnMount} from "../../../../services/api";
 import {useAuth} from "../../../../services/auth";
 import {useState} from "react";
 
@@ -8,7 +8,7 @@ function AnswerPerQuestion(props) {
   return (
     <>
       <hr/>
-      <AnswerStack answerList={[props.ansObj[`${props.questionId}`]]}/>
+      <AnswerStack answerList={props.ansObj[`${props.questionId}`]}/>
     </>
   );
 }
@@ -25,7 +25,7 @@ export default function MyAnswers() {
     if (qnaObjList) {
       let ansObj = {}
       for (const obj of qnaObjList) {
-        ansObj[`${obj.question.id}`] = obj.answer;
+        ansObj[`${obj.question.id}`] = obj.answers;
       }
       setAnsObj(ansObj);
     }
@@ -33,7 +33,7 @@ export default function MyAnswers() {
 
   useFetchDataOnMount(
     {
-      asyncFetch: () => answerPerQuestionPerUserId(auth.user.id),
+      asyncFetch: () => myAnswers(auth.tokenObj),
       mounted: mounted,
       setMounted: setMounted,
       dataState: qnaObjList,

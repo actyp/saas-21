@@ -170,13 +170,12 @@ export default function AskPage() {
     const data = {
       title:title,
       text:text,
-      keywords:keywords,
-      username: auth.user.username
+      keywords:keywords
     };
 
-    askQuestion(data).then(status => {
+    askQuestion(data, auth.tokenObj).then(date => {
       if (mounted) {
-        setSubmitStatus({value: status, show: true});
+        setSubmitStatus({value: date !== null, show: true});
       }
     });
   };

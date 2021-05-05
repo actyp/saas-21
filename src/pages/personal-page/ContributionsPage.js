@@ -1,5 +1,5 @@
 import {ChartTemplate, LoadingHandler} from "../../components";
-import {dailyContributionsPerUserId, useFetchDataOnMount} from "../../services/api";
+import {myContributions, useFetchDataOnMount} from "../../services/api";
 import {useAuth} from "../../services/auth";
 import {useState} from "react";
 
@@ -12,7 +12,7 @@ export default function ContributionsPage() {
 
   useFetchDataOnMount(
     {
-      asyncFetch: () => dailyContributionsPerUserId(auth.user.id),
+      asyncFetch: () => myContributions(auth.tokenObj),
       mounted: mounted,
       setMounted: setMounted,
       dataState: data,

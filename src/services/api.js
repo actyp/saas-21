@@ -1,244 +1,203 @@
 import axios from 'axios';
 import {useEffect} from "react";
 
-// baseInstance of axios
-export const baseInstance = axios.create({
-  baseURL: `https://reqres.in/`
-});
+// apiInstance of axios with optional
+// token attachment on request and
+// refresh and retry on unauthorized response
+export function apiInstance({token, refreshTokenFn} = {}) {
+
+  const apiInstance = axios.create({
+    baseURL: `https://localhost:3000/`
+  });
+
+  if(token) {
+    // attach token on requests
+    apiInstance.interceptors.request.use(
+      req => {
+        req.headers['authorization'] = `Bearer ${token}`;
+        return req;
+      }, err => {
+        return Promise.reject(err);
+      }
+    );
+  }
+
+  // check status on responses
+  // if status === 401 then
+  // refresh token and retry the request
+  if(refreshTokenFn) {
+    apiInstance.interceptors.response.use(
+      resp => {
+        return resp;
+      }, err => {
+        const originalReq = err.config;
+        if (err.response.status === 401 && !originalReq._retry) {
+          originalReq._retry = true;
+          refreshTokenFn().then(token => {
+            originalReq.headers['authorization'] = `Bearer ${token}`;
+            return apiInstance(originalReq);
+          }).catch(err => {
+            return Promise.reject(err);
+          });
+        }
+        return Promise.reject(err);
+      }
+    );
+  }
+  return apiInstance;
+}
 
 // keyword-page
 export function questionsPerKeyword() {
-  let data = [];
-  for (let i=1; i<=200; i++) {
-    data.push({
-      'keyword': `k-${i}`,
-      'questions': Math.ceil(Math.random()*1000)
+  return apiInstance()
+    .get('question-per-keyword-count')
+    .then(resp => {
+      let key_que = [];
+      for(const key in resp.data) {
+        key_que.push({
+          'keyword': key,
+          'questions': resp.data[key]
+        });
+      }
+      return key_que;
     })
-  }
-  const fakeData = {key_que: data};
-
-  return baseInstance
-    .get('api/users/23')
-    .then(resp => resp.data.key_que)
     .catch(err => {
-      console.log(err);
-      return fakeData.key_que;
-      //return null;
+      //log err if possible
+      return null;
     });
 }
 
 // date-page
 export function questionsPerDate() {
-  let data = [];
-  const start=new Date('2021/01/01');
-  const end=new Date('2021/01/02');
-
-  for (let i=1; i<=200; i++) {
-    data.push({
-      'date': new Date(start.getTime() + i * (end.getTime() - start.getTime())).toDateString(),
-      'questions': Math.ceil(Math.random()*1000)
+  return apiInstance()
+    .get('question-per-date-count')
+    .then(resp => {
+      let date_que = [];
+      for(const date in resp.data) {
+        date_que.push({
+          'date': date,
+          'questions': resp.data[date]
+        });
+      }
+      return date_que;
     })
-  }
-  const fakeData = {date_que: data};
-
-  return baseInstance
-    .get('api/users/23')
-    .then(resp => resp.data.date_que)
     .catch(err => {
-      console.log(err);
-      return fakeData.date_que;
-      //return null;
+      //log err if possible
+      return null;
     });
 }
 
 // ask-page
-export function askQuestion(data) {
-  return baseInstance
-    .post('api/login', data)
-    .then(() => true)
+export function askQuestion(data, tokenObj) {
+  return apiInstance(tokenObj)
+    .post('create-question', data)
+    .then(resp => resp.data.date)
     .catch(err => {
-      console.log(err);
-      return false;
+      //log err if possible
+      return null;
     });
 }
 
 // browse-page
 export function allQuestions() {
-  let questions = [];
-  for(let id=1; id<=100; id++){
-    questions.push(
-      {
-        id: id,
-        title: "Question heading / title" + id,
-        text: "Question text",
-        keywords: id % 2 === 0 ? ["Question"] : ["related"],
-        username: "username",
-        date: "Jan 05 2021 04:20"
-      },
-      {
-        id: (200-id),
-        title: "Question heading / title" + (200-id),
-        text: "Question text",
-        keywords: (200-id) % 2 === 0 ? ["keywords"] : ["tags"],
-        username: "username",
-        date: "Jan 15 2021 04:20"
-      }
-    );
-  }
-  const fakeData = { questions: questions }
-
-  return baseInstance
-    .get('api/users/23')
-    .then(resp => resp.data.questions)
+  return apiInstance()
+    .get('questions')
+    .then(resp => resp.data)
     .catch(err => {
-      console.log(err);
-      return fakeData.questions;
-      //return null;
+      //log err if possible
+      return null;
     });
 }
 
 // answer-page, personal/qna-page (my questions)
 export function answersPerQuestionId(id) {
-  const fakeData = {
-    answers:
-      [
-        {
-          text: "Answer text for id: " + id,
-          username: "username",
-          date: "date"
-        },
-        {
-          text: "Answer text for id: " + id,
-          username: "username",
-          date: "date"
-        },
-        {
-          text: "Answer text for id: " + id,
-          username: "username",
-          date: "date"
-        }
-      ]};
-
-  return baseInstance
-    .post('api/login',{id: id})
-    .then(resp => resp.data.answers)
+  return apiInstance()
+    .get(`answers-per-question?id=${id}`)
+    .then(resp => resp.data)
     .catch(err => {
-      console.log(err);
-      return fakeData.answers;
-      //return null;
+      //log err if possible
+      return null;
     });
 }
 
 // answer-page
-export function submitAnswer(data) {
-  const fakeAnswer = {
-    text:data.text,
-    username: data.username,
-    date:Date().slice(3,21)
-  };
-
-  return baseInstance
-    .post('api/login', data)
-    .then(resp => resp.data)
+export function submitAnswer(data, tokenObj) {
+  return apiInstance(tokenObj)
+    .post('create-answer', data)
+    .then(resp => resp.data.date)
     .catch(err => {
-      console.log(err);
-      return fakeAnswer;
-      //return null;
+      //log err if possible
+      return null;
     });
 }
 
 // personal/qna-page (my questions)
-export function questionsPerUserId(id) {
-  let questions = [];
-  for(let id=1; id<=100; id++){
-    questions.push(
-      {
-        id: id,
-        title: "Question heading / title" + id,
-        text: "Question text",
-        keywords: id % 2 === 0 ? ["Question"] : ["related"],
-        username: "username",
-        date: "Jan 05 2021 04:20"
-      },
-      {
-        id: (200-id),
-        title: "Question heading / title" + (200-id),
-        text: "Question text",
-        keywords: (200-id) % 2 === 0 ? ["keywords"] : ["tags"],
-        username: "username",
-        date: "Jan 15 2021 04:20"
-      }
-    );
-  }
-  const fakeData = { questions: questions }
-
-  return baseInstance
-    .post('api/login',{id: id})
-    .then(resp => resp.data.questions)
+export function myQuestions(tokenObj) {
+  return apiInstance(tokenObj)
+    .get('my-questions')
+    .then(resp => resp.data)
     .catch(err => {
-      console.log(err);
-      return fakeData.questions;
-      //return null;
+      //log err if possible
+      return null;
     });
 }
 
 // personal/qna-page (my answers)
-export function answerPerQuestionPerUserId(id) {
-  let qnaL = [];
-  for(let id=1; id<=50; id++){
-    qnaL.push(
-      {
-        question: {
-          id: id,
-          title: "Question heading / title" + id,
-          text: "Question text",
-          keywords: id % 2 === 0 ? ["Question"] : ["related"],
-          username: "username",
-          date: "Jan 05 2021 04:20"
-        },
-        answer: {
-          text: "Answer text for question: " + id,
-          username: "me",
-          date: "date"
-        }
-      }
-    );
-  }
-  const fakeData = { qna: qnaL }
-
-  return baseInstance
-    .post('api/login',{id: id})
-    .then(resp => resp.data.qna)
+export function myAnswers(tokenObj) {
+  return apiInstance(tokenObj)
+    .get('my-answers')
+    .then(resp => resp.data)
     .catch(err => {
-      console.log(err);
-      return fakeData.qna;
-      //return null;
+      //log err if possible
+      return null;
     });
 }
 
 // personal/contributions-page
-export function dailyContributionsPerUserId(id) {
-  let qna = [];
-  const start=new Date('2021/01/01');
-  const end=new Date('2021/01/02');
-
-  for (let i=1; i<=200; i++) {
-    qna.push({
-      'date': new Date(start.getTime() + i * (end.getTime() - start.getTime())).toDateString(),
-      'questions': Math.ceil(Math.random()*1000),
-      'answers': Math.ceil(Math.random()*1000)
-    })
+export function myContributions(tokenObj) {
+  const makeList = (questions, answers) => {
+    console.log(questions);
+    let qnaDict = {};
+    for(const date in questions) {
+      qnaDict[date] = { questions:  questions[date], answers: 0 }
+    }
+    for(const date in answers) {
+      qnaDict[date] = {
+        questions: qnaDict[date] ? qnaDict[date]['questions'] : 0,
+        answers: answers[date]
+      }
+    }
+    let qnaList = [];
+    for(const date in qnaDict) {
+      qnaList.push({
+        'date': new Date(date).toDateString(),
+        'questions': qnaDict[date]['questions'],
+        'answers': qnaDict[date]['answers']
+      });
+    }
+    return qnaList;
   }
-  const fakeData = {contributions: qna};
 
-  return baseInstance
-    .post('api/login',{id: id})
-    .then(resp => resp.data.contributions)
+  let questions = {};
+  apiInstance(tokenObj)
+    .get('my-question-per-date-count')
+    .then(resp => questions = resp.data)
     .catch(err => {
-      console.log(err);
-      return fakeData.contributions;
-      //return null;
+      //log err if possible
+      return null;
     });
+
+  if(questions) {
+    return apiInstance(tokenObj)
+      .get('my-answer-per-date-count')
+      .then(resp => makeList(questions, resp.data))
+      .catch(err => {
+        //log err if possible
+        return null;
+      });
+  } else {
+    return null;
+  }
 }
 
 // set mounted to true on mount and false on unmount
