@@ -191,8 +191,7 @@ export default function NavBarSignedOut() {
     const toggle_delayed = (f1, f2) => {
       f1() ; setTimeout(() => f2(), 1500)
     }
-
-    //remove password for failure
+    
     command[type](email, password).then(resp => {
       if (mounted && resp === null) {
         toggle_delayed(
