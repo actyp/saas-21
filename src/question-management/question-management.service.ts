@@ -13,7 +13,7 @@ export class QuestionManagementService {
   };
   constructor(private redisClient: RedisClientService) {}
 
-  get_date() {
+  private static get_date() {
     const unix = parseInt((new Date().getTime() / 1000).toFixed(0));
 
     const date = new Date(unix * 1000);
@@ -47,7 +47,7 @@ export class QuestionManagementService {
       return this.status_code[400];
     }
 
-    const [timestamp, date_string, unix] = this.get_date();
+    const [timestamp, date_string, unix] = QuestionManagementService.get_date();
     const question_id = Buffer.from(
       data.username + '[' + timestamp + ']',
     ).toString('base64');
@@ -107,7 +107,7 @@ export class QuestionManagementService {
       return this.status_code[400];
     }
 
-    const [timestamp, date_string, unix] = this.get_date();
+    const [timestamp, date_string, unix] = QuestionManagementService.get_date();
     const answer_id = Buffer.from(
       data.username + '[' + timestamp + ']',
     ).toString('base64');
