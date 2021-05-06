@@ -9,10 +9,11 @@ import {
   HttpStatus,
   Get,
   Query,
+  Scope,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 
-@Controller('api')
+@Controller({ path: 'api', scope: Scope.REQUEST })
 export class AppController {
   private readonly logger = new Logger(AppController.name);
 
