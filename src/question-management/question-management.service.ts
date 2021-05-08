@@ -1,6 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { RedisClientService } from '../redis-client/redis-client.service';
 
+interface CreateQuestionDto {
+  username: string;
+  title: string;
+  text: string;
+  keywords: string[];
+}
+
+interface CreateAnswerDto {
+  username: string;
+  question_id: string;
+  text: string;
+}
+
 @Injectable()
 export class QuestionManagementService {
   private readonly status_code = {
@@ -42,7 +55,7 @@ export class QuestionManagementService {
     return [timestamp, date.toDateString(), unix];
   }
 
-  async create_question(data: any) {
+  async create_question(data: CreateQuestionDto) {
     if (data.title === undefined || data.text === undefined) {
       return this.status_code[400];
     }
@@ -97,7 +110,7 @@ export class QuestionManagementService {
     return { date: timestamp };
   }
 
-  async create_answer(data: any) {
+  async create_answer(data: CreateAnswerDto) {
     const redis = await this.redisClient.getClient();
     if (
       data.question_id === undefined ||
