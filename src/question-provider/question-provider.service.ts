@@ -1,6 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { RedisClientService } from '../redis-client/redis-client.service';
 
+interface QuestionsDto {
+  start: string;
+  stop: string;
+}
+
+interface UsernameDto {
+  username: string;
+}
+
+interface AnswersPerQuestionDto {
+  question_id: string;
+}
+
 @Injectable()
 export class QuestionProviderService {
   private readonly status_code = {
@@ -49,27 +62,28 @@ export class QuestionProviderService {
     return answer;
   }
 
-  async questions(data: any) {
+  async questions(data: QuestionsDto) {
+    let stop: number;
     if (data.stop === undefined) {
-      data.stop = -1;
+      stop = -1;
     } else {
-      data.stop = parseInt(data.stop);
+      stop = parseInt(data.stop);
     }
 
     if (data.start === undefined) {
       return this.status_code[400];
     }
 
-    data.start = parseInt(data.start);
+    const start = parseInt(data.start);
 
     return await Promise.all(
       (
-        await this.redisClient.lrange('questions', data.start, data.stop)
+        await this.redisClient.lrange('questions', start, stop)
       ).map((question_id) => this.get_question(question_id)),
     );
   }
 
-  async my_questions(data: any) {
+  async my_questions(data: UsernameDto) {
     return await Promise.all(
       (await this.redisClient.zrange(data.username + ':questions', 0, -1)).map(
         async (question_id) => await this.get_question(question_id),
@@ -77,7 +91,7 @@ export class QuestionProviderService {
     );
   }
 
-  async my_answers(data: any) {
+  async my_answers(data: UsernameDto) {
     const answers = await Promise.all(
       (await this.redisClient.zrange(data.username + ':answers', 0, -1)).map(
         async (answer_id) => await this.get_answer(answer_id),
@@ -107,7 +121,7 @@ export class QuestionProviderService {
     return re;
   }
 
-  async answers_per_question(data: any) {
+  async answers_per_question(data: AnswersPerQuestionDto) {
     if (data.question_id === undefined) {
       return this.status_code[400];
     }
@@ -139,7 +153,7 @@ export class QuestionProviderService {
     }, {});
   }
 
-  async my_question_per_date_count(data: any) {
+  async my_question_per_date_count(data: UsernameDto) {
     return Object.entries(
       await this.redisClient.hgetall(data.username + ':questions:dates'),
     ).reduce<Record<string, any>>((acc, curr) => {
@@ -148,7 +162,7 @@ export class QuestionProviderService {
     }, {});
   }
 
-  async my_answer_per_date_count(data: any) {
+  async my_answer_per_date_count(data: UsernameDto) {
     return Object.entries(
       await this.redisClient.hgetall(data.username + ':answers:dates'),
     ).reduce<Record<string, any>>((acc, curr) => {
