@@ -4,6 +4,20 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { jwtConstants } from './constants';
 
+interface LocalGuardDto {
+  username: string;
+  password: string;
+}
+
+interface JwtGuardDto {
+  refresh_token: string;
+}
+
+interface SignUpDto {
+  username: string;
+  password: string;
+}
+
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
@@ -20,7 +34,7 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async local_guard(data: any) {
+  async local_guard(data: LocalGuardDto) {
     const user = await this.validatePassword(data.username, data.password);
     if (user === null) {
       throw new Error('Unauthorized');
@@ -28,7 +42,7 @@ export class AuthService {
     return user;
   }
 
-  async jwt_guard(data: any) {
+  async jwt_guard(data: JwtGuardDto) {
     try {
       this.jwtService.verify(data.refresh_token);
     } catch (error) {
@@ -112,30 +126,31 @@ export class AuthService {
     return this.status_code[200];
   }
 
-  async signup(username: string, password: string) {
+  async signup(data: SignUpDto) {
     const re = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
     if (
-      username === undefined ||
-      password === undefined ||
-      !re.test(username)
+      data.username === undefined ||
+      data.password === undefined ||
+      data.username.length > 255 ||
+      !re.test(data.username)
     ) {
       return this.status_code[400];
     }
 
-    const hash = await bcrypt.hash(password, 10);
+    const hash = await bcrypt.hash(data.password, 10);
     const redis = await this.redisClient.getClient();
 
-    const exists = await redis.exists(username);
+    const exists = await redis.exists(data.username);
     if (exists === 1) {
       return this.status_code[406];
     }
 
     const code = await redis
-      .watch(username)
+      .watch(data.username)
       .then(() =>
         redis
           .multi()
-          .hmset(username, { password: hash, refresh_token: '' })
+          .hmset(data.username, { password: hash, refresh_token: '' })
           .exec(),
       )
       .then((results) => {

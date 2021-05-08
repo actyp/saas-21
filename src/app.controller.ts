@@ -67,6 +67,6 @@ export class AppController {
   async signup(@Payload() payload) {
     const data = this.json_parse(payload);
 
-    return this.authService.signup(data.username, data.password);
+    return this.authService.signup(data);
   }
 }
