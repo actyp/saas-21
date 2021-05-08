@@ -106,17 +106,6 @@ export class AppController {
     );
   }
 
-  @Post('logout')
-  async logout(@Request() req, @Res() res) {
-    return this.client_send(
-      this.auth_client,
-      res,
-      { refresh_token: req.cookies.refresh_token },
-      'logout',
-      this.respond,
-    );
-  }
-
   @Post('login')
   async login(@Body() body, @Res() res) {
     return this.client_send(
@@ -125,6 +114,17 @@ export class AppController {
       body,
       'login',
       this.respond_to_login,
+    );
+  }
+
+  @Post('logout')
+  async logout(@Request() req, @Res() res) {
+    return this.client_send(
+      this.auth_client,
+      res,
+      { refresh_token: req.cookies.refresh_token },
+      'logout',
+      this.respond,
     );
   }
 
