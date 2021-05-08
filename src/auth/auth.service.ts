@@ -4,15 +4,6 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { jwtConstants } from './constants';
 
-interface LocalGuardDto {
-  username: string;
-  password: string;
-}
-
-interface JwtGuardDto {
-  refresh_token: string;
-}
-
 interface SignUpDto {
   username: string;
   password: string;
@@ -34,7 +25,7 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async local_guard(data: LocalGuardDto) {
+  async local_guard(data: { username: string; password: string }) {
     const user = await this.validatePassword(data.username, data.password);
     if (user === null) {
       throw new Error('Unauthorized');
@@ -42,7 +33,7 @@ export class AuthService {
     return user;
   }
 
-  async jwt_guard(data: JwtGuardDto) {
+  async jwt_guard(data: { refresh_token: string }) {
     try {
       this.jwtService.verify(data.refresh_token);
     } catch (error) {
@@ -75,7 +66,7 @@ export class AuthService {
     return null;
   }
 
-  async refresh(user: any) {
+  async refresh(user: { username: string }) {
     const access_token_expiry = new Date(new Date().getTime() + 900 * 1000);
     const access_token = this.jwtService.sign(
       { username: user.username },
@@ -88,7 +79,7 @@ export class AuthService {
     };
   }
 
-  async login(user: any) {
+  async login(user: { username: string }) {
     const access_token_expiry = new Date(new Date().getTime() + 900 * 1000);
     const access_token = this.jwtService.sign(
       { username: user.username },
@@ -115,7 +106,7 @@ export class AuthService {
     };
   }
 
-  async logout(user: any) {
+  async logout(user: { username: string }) {
     const ok = await this.redisClient.hmset(user.username, {
       refresh_token: '',
     });
