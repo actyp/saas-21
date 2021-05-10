@@ -25,15 +25,15 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async local_guard(data: { username: string; password: string }) {
+  async local_guard(data: any) {
     const user = await this.validatePassword(data.username, data.password);
     if (user === null) {
       throw new Error('Unauthorized');
     }
-    return user;
+    return data;
   }
 
-  async jwt_guard(data: { refresh_token: string }) {
+  async jwt_guard(data: any) {
     try {
       this.jwtService.verify(data.refresh_token);
     } catch (error) {
@@ -50,7 +50,8 @@ export class AuthService {
       throw new Error('Unauthorized');
     }
 
-    return { username: jwt_decoded.username };
+    data.username = jwt_decoded.username;
+    return data;
   }
 
   async validatePassword(username: string, pass: string): Promise<any> {
@@ -66,10 +67,10 @@ export class AuthService {
     return null;
   }
 
-  async refresh(user: { username: string }) {
+  async refresh(username: string) {
     const access_token_expiry = new Date(new Date().getTime() + 900 * 1000);
     const access_token = this.jwtService.sign(
-      { username: user.username },
+      { username: username },
       { secret: jwtConstants.access_token_secret, expiresIn: '900s' },
     );
 
@@ -79,18 +80,18 @@ export class AuthService {
     };
   }
 
-  async login(user: { username: string }) {
+  async login(username: string) {
     const access_token_expiry = new Date(new Date().getTime() + 900 * 1000);
     const access_token = this.jwtService.sign(
-      { username: user.username },
+      { username: username },
       { secret: jwtConstants.access_token_secret, expiresIn: '900s' },
     );
 
     const refresh_token = this.jwtService.sign(
-      { username: user.username },
+      { username: username },
       { expiresIn: '5400s' },
     );
-    const ok = await this.redisClient.hmset(user.username, {
+    const ok = await this.redisClient.hmset(username, {
       refresh_token: refresh_token,
     });
 
@@ -99,15 +100,15 @@ export class AuthService {
     }
 
     return {
-      username: user.username,
+      username: username,
       access_token: access_token,
       access_token_expiry: access_token_expiry.getTime(),
       refresh_token: refresh_token,
     };
   }
 
-  async logout(user: { username: string }) {
-    const ok = await this.redisClient.hmset(user.username, {
+  async logout(username: string) {
+    const ok = await this.redisClient.hmset(username, {
       refresh_token: '',
     });
 

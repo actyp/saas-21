@@ -21,7 +21,7 @@ export class AppController {
 
     return this.authService
       .jwt_guard(data)
-      .then((user) => this.authService.refresh(user))
+      .then((data) => this.authService.refresh(data.username))
       .catch((err) => {
         if (err.message === 'Unauthorized') {
           return { statusCode: 401, message: 'Unauthorized' };
@@ -37,7 +37,7 @@ export class AppController {
 
     return this.authService
       .local_guard(data)
-      .then((user) => this.authService.login(user))
+      .then((data) => this.authService.login(data.username))
       .catch((err) => {
         if (err.message === 'Unauthorized') {
           return { statusCode: 401, message: 'Unauthorized' };
@@ -53,7 +53,7 @@ export class AppController {
 
     return this.authService
       .jwt_guard(data)
-      .then((user) => this.authService.logout(user))
+      .then((data) => this.authService.logout(data.username))
       .catch((err) => {
         if (err.message === 'Unauthorized') {
           return { statusCode: 401, message: 'Unauthorized' };
