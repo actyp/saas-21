@@ -32,7 +32,7 @@ export class AppController {
 
     return this.authService
       .jwt_guard(data)
-      .then((data) => this.questionProvider.my_questions(data))
+      .then((data) => this.questionProvider.my_questions(data.username))
       .catch((err) => {
         if (err.message === 'Unauthorized') {
           return { statusCode: 401, message: 'Unauthorized' };
@@ -48,7 +48,7 @@ export class AppController {
 
     return this.authService
       .jwt_guard(data)
-      .then((data) => this.questionProvider.my_answers(data))
+      .then((data) => this.questionProvider.my_answers(data.username))
       .catch((err) => {
         if (err.message === 'Unauthorized') {
           return { statusCode: 401, message: 'Unauthorized' };
@@ -81,7 +81,9 @@ export class AppController {
 
     return this.authService
       .jwt_guard(data)
-      .then((data) => this.questionProvider.my_question_per_date_count(data))
+      .then((data) =>
+        this.questionProvider.my_question_per_date_count(data.username),
+      )
       .catch((err) => {
         if (err.message === 'Unauthorized') {
           return { statusCode: 401, message: 'Unauthorized' };
@@ -97,7 +99,9 @@ export class AppController {
 
     return this.authService
       .jwt_guard(data)
-      .then((data) => this.questionProvider.my_answer_per_date_count(data))
+      .then((data) =>
+        this.questionProvider.my_answer_per_date_count(data.username),
+      )
       .catch((err) => {
         if (err.message === 'Unauthorized') {
           return { statusCode: 401, message: 'Unauthorized' };

@@ -6,10 +6,6 @@ interface QuestionsDto {
   stop: string;
 }
 
-interface UsernameDto {
-  username: string;
-}
-
 interface AnswersPerQuestionDto {
   question_id: string;
 }
@@ -83,17 +79,17 @@ export class QuestionProviderService {
     );
   }
 
-  async my_questions(data: UsernameDto) {
+  async my_questions(username: string) {
     return await Promise.all(
-      (await this.redisClient.zrange(data.username + ':questions', 0, -1)).map(
+      (await this.redisClient.zrange(username + ':questions', 0, -1)).map(
         async (question_id) => await this.get_question(question_id),
       ),
     );
   }
 
-  async my_answers(data: UsernameDto) {
+  async my_answers(username: string) {
     const answers = await Promise.all(
-      (await this.redisClient.zrange(data.username + ':answers', 0, -1)).map(
+      (await this.redisClient.zrange(username + ':answers', 0, -1)).map(
         async (answer_id) => await this.get_answer(answer_id),
       ),
     );
@@ -153,18 +149,18 @@ export class QuestionProviderService {
     }, {});
   }
 
-  async my_question_per_date_count(data: UsernameDto) {
+  async my_question_per_date_count(username: string) {
     return Object.entries(
-      await this.redisClient.hgetall(data.username + ':questions:dates'),
+      await this.redisClient.hgetall(username + ':questions:dates'),
     ).reduce<Record<string, any>>((acc, curr) => {
       acc[curr[0]] = parseInt(curr[1]);
       return acc;
     }, {});
   }
 
-  async my_answer_per_date_count(data: UsernameDto) {
+  async my_answer_per_date_count(username: string) {
     return Object.entries(
-      await this.redisClient.hgetall(data.username + ':answers:dates'),
+      await this.redisClient.hgetall(username + ':answers:dates'),
     ).reduce<Record<string, any>>((acc, curr) => {
       acc[curr[0]] = parseInt(curr[1]);
       return acc;
