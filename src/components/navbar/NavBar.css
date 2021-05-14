@@ -1,0 +1,15 @@
+.navbar-brand {
+    font-family: cursive;
+}
+
+.navbar-toggler {
+    border: none;
+}
+
+.navbar-toggler:focus {
+    outline: none;
+}
+
+.navbar {
+    background: rgba(198, 198, 241, 0.95);
+}

@@ -6,9 +6,9 @@ body {
 /* content */
 #content {
   padding-bottom: 2%;
-  background: linear-gradient(180deg, rgba(248,249,250,1) 0%, rgba(219,219,219,1) 50%, rgb(179 181 166) 100%);
+  background: beige;
   margin-top: 56px;
-  min-height: 100vh;
+  min-height: 86.3vh;
 }
 
 /* disable underline of links on hover */

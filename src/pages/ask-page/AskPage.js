@@ -22,18 +22,12 @@ function AskForm(props) {
       valid = false;
     }
 
-    if(props.keywords.length === 0) {
-      errors['keywords'] = "Keywords are required.";
-      valid = false;
-    }
-
     setError(errors);
     return valid;
   }
 
   return (
     <Form>
-      <h3 className="text-center mb-5"> Ask a question </h3>
       <Form.Row className="justify-content-md-center mx-0 mb-2">
         <Col md={5}>
           <Form.Group>
@@ -77,12 +71,12 @@ function AskForm(props) {
               <Form.Control
                 placeholder="Question;related;keywords;tags"
                 onChange={e => props.setKeywords(
-                  e.target.value === "" ? [] : e.target.value.split(';').map(k => k.toLowerCase()))}
+                  e.target.value.split(';').filter(x => x !== "").map(k => k.toLowerCase()))
+                }
               />
             </InputGroup>
             <Form.Text className="text-muted ml-5">
               Separate keywords with semicolon ( ; )
-              <span className="text-danger ml-2">{error['keywords']}</span>
             </Form.Text>
             <Form.Text className="text-muted ml-5">
               Keywords are stored in lowercase.
@@ -184,6 +178,7 @@ export default function AskPage() {
 
   return (
     <>
+      <h3 className="text-center mb-5 pt-4"> Ask a question </h3>
       <AskForm
         title={title} setTitle={setTitle}
         text={text} setText={setText}

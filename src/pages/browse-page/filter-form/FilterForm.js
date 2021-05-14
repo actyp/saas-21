@@ -4,7 +4,7 @@ import {useState} from "react";
 import "./FilterForm.css";
 
 export default function FilterForm(props) {
-  const [showCriteria, setShowCriteria] = useState(false);
+  const [disableClear, setDisableClear] = useState(true);
   const [error, setError] = useState({});
 
   const formValid = () => {
@@ -24,12 +24,17 @@ export default function FilterForm(props) {
 
     const isSingleDateBlank = (d1, d2) => (!d1 && d2) || (d1 && !d2);
     if(isSingleDateBlank(props.dateFrom, props.dateTo)) {
-      errors['date'] = "Complete either both dates or none.";
+      errors['date'] += " Complete either both dates or none.";
       valid = false;
     }
 
     if (valid && new Date(props.dateFrom) > new Date(props.dateTo)) {
-      errors['date'] = "Date From should be less or equal than Date To."
+      errors['date'] = "Date From should be less or equal than Date To.";
+      valid = false;
+    }
+
+    if (props.keywords.every(k => k === "")) {
+      errors['keywords'] = "Keywords should not be blank.";
       valid = false;
     }
 
@@ -46,8 +51,9 @@ export default function FilterForm(props) {
           </InputGroup.Prepend>
           <Form.Control
             placeholder="Date: yyyy/mm/dd or yyyy-mm-dd"
+            value={props.dateFrom}
             onChange={e => {
-              setShowCriteria(false);
+              props.setShowCriteria(false);
               props.setDateFrom(e.target.value)
             }}
           />
@@ -56,8 +62,9 @@ export default function FilterForm(props) {
           </InputGroup.Prepend>
           <Form.Control
             placeholder="Date: yyyy/mm/dd or yyyy-mm-dd"
+            value={props.dateTo}
             onChange={e => {
-              setShowCriteria(false);
+              props.setShowCriteria(false);
               props.setDateTo(e.target.value);
             }}
           />
@@ -74,8 +81,9 @@ export default function FilterForm(props) {
           </InputGroup.Prepend>
           <Form.Control
             placeholder="Keywords to filter...  e.g. forty;two"
+            value={props.keywords.join(';')}
             onChange={e => {
-              setShowCriteria(false);
+              props.setShowCriteria(false);
               props.setKeywords(e.target.value === "" ? [] : e.target.value.split(';'));
             }}
           />
@@ -85,52 +93,57 @@ export default function FilterForm(props) {
               disabled={!props.dateFrom.length && !props.dateTo.length && !props.keywords.length}
               onClick={() => {
                 if(formValid()) {
-                  setShowCriteria(true);
+                  setDisableClear(false);
+                  props.setShowCriteria(true);
                   props.onFilter();
                 }
               }}
             >
               Filter Questions
             </Button>
-            {showCriteria &&
             <Button
-              variant="outline-danger"
+              variant="outline-danger shadow-none"
+              disabled={disableClear}
               onClick={() => {
-                setShowCriteria(false);
+                setDisableClear(true);
+                props.setShowCriteria(false);
                 props.onClear();
               }}
             >
-              Clear Criteria
+              Clear Filter
             </Button>
-            }
           </InputGroup.Append>
         </InputGroup>
         <Form.Text className="text-muted ml-5">
           Separate keywords with semicolon ( ; )
+          <span className="text-danger ml-2">{error['keywords']}</span>
+        </Form.Text>
+        <Form.Text className="text-muted ml-5">
+          All keywords are in lowercase.
         </Form.Text>
       </Form.Group>
       <hr />
-      {showCriteria &&
+      {props.showCriteria &&
         <>
           <h5 className="text-center">Filter Criteria</h5>
           <Table borderless hover>
             <tbody>
               {props.dateFrom.length > 0 &&
               <tr>
-              <td><b>From</b></td>
-              <td className="text-right">{props.dateFrom}</td>
+                <td><b>From</b></td>
+                <td className="text-right">{props.dateFrom}</td>
               </tr>
               }
               {props.dateTo.length > 0 &&
               <tr>
-              <td><b>To</b></td>
-              <td className="text-right">{props.dateTo}</td>
+                <td><b>To</b></td>
+                <td className="text-right">{props.dateTo}</td>
               </tr>
               }
               {props.keywords.length > 0 &&
               <tr>
-              <td><b>Keywords</b></td>
-              <td className="text-right">{props.keywords.join(', ')}</td>
+                <td><b>Keywords</b></td>
+                <td className="text-right">{props.keywords.filter(x => x !== "").join(', ')}</td>
               </tr>
               }
             </tbody>

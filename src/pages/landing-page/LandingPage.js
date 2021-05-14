@@ -1,12 +1,13 @@
 import {BodyCards} from "../../components";
 import {useAuth} from "../../services/auth";
+import {keywords, hourglass, pen, library} from "../../images";
 
 export default function LandingPage() {
   const auth = useAuth();
 
   const cardList = [
     {
-      imgSource: "https://source.unsplash.com/7PYqjNzvrc4/450x450",
+      imgSource: keywords,
       bodyTitle: "Questions per Keyword",
       bodyText: "Check out questions per keyword in a graphical and in a tabular scheme.",
       footerHref: "/keyword",
@@ -14,7 +15,7 @@ export default function LandingPage() {
       btnText: "Show me the statistics"
     },
     {
-      imgSource: "https://source.unsplash.com/BXOXnQ26B7o/450x450",
+      imgSource: hourglass,
       bodyTitle: "Questions per Day / Period",
       bodyText: "Check out questions per day or period in a graphical and in a tabular scheme.",
       footerHref: "/date",
@@ -22,7 +23,7 @@ export default function LandingPage() {
       btnText: "Show me the statistics"
     },
     {
-      imgSource: "https://source.unsplash.com/i--IN3cvEjg/450x450",
+      imgSource: pen,
       bodyTitle: "Ask a Question",
       bodyText: "You are free to ask any question, anytime.",
       footerHref: auth.user !== null ? "/ask" : "/",
@@ -30,7 +31,7 @@ export default function LandingPage() {
       btnText: auth.user ? "Ask a question" : "Sign in to ask a question"
     },
     {
-      imgSource: "https://source.unsplash.com/_gEKtyIbRSM/450x450",
+      imgSource: library,
       bodyTitle: "Browse and Answer a Question",
       bodyText: "You are free to browse and answer any question.",
       footerHref: "/browse",

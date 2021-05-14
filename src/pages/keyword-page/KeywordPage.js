@@ -21,7 +21,7 @@ export default function KeywordPage() {
 
   return (
     <>
-      <h3 className="text-center mb-4">Questions per Keyword</h3>
+      <h3 className="text-center mb-4 pt-4">Questions per Keyword</h3>
       <LoadingHandler data={data} loading={loading} text="Loading questions per keyword...">
         <ChartTemplate
           mainChart = 'bar'

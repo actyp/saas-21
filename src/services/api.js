@@ -3,18 +3,18 @@ import {useEffect} from "react";
 
 // apiInstance of axios with optional
 // token attachment on request and
-// refresh and retry on unauthorized response
-export function apiInstance({token, refreshTokenFn} = {}) {
+// reset auth on unauthorized response
+export function apiInstance({token, resetAuth} = {}) {
 
   const apiInstance = axios.create({
-    baseURL: `https://localhost:3000/`
+    baseURL: "/api/"
   });
 
   if(token) {
     // attach token on requests
     apiInstance.interceptors.request.use(
       req => {
-        req.headers['authorization'] = `Bearer ${token}`;
+        req.headers['Authorization'] = `Bearer ${token}`;
         return req;
       }, err => {
         return Promise.reject(err);
@@ -24,26 +24,21 @@ export function apiInstance({token, refreshTokenFn} = {}) {
 
   // check status on responses
   // if status === 401 then
-  // refresh token and retry the request
-  if(refreshTokenFn) {
+  // reset Auth and automatically
+  // redirect to landing page
+  if(resetAuth) {
     apiInstance.interceptors.response.use(
       resp => {
         return resp;
       }, err => {
-        const originalReq = err.config;
-        if (err.response.status === 401 && !originalReq._retry) {
-          originalReq._retry = true;
-          refreshTokenFn().then(token => {
-            originalReq.headers['authorization'] = `Bearer ${token}`;
-            return apiInstance(originalReq);
-          }).catch(err => {
-            return Promise.reject(err);
-          });
+        if(err.response.status === 401) {
+          resetAuth();
         }
         return Promise.reject(err);
       }
     );
   }
+
   return apiInstance;
 }
 
@@ -101,7 +96,7 @@ export function askQuestion(data, tokenObj) {
 // browse-page
 export function allQuestions() {
   return apiInstance()
-    .get('questions')
+    .get('questions?start=0')
     .then(resp => resp.data)
     .catch(err => {
       //log err if possible
@@ -156,7 +151,6 @@ export function myAnswers(tokenObj) {
 // personal/contributions-page
 export function myContributions(tokenObj) {
   const makeList = (questions, answers) => {
-    console.log(questions);
     let qnaDict = {};
     for(const date in questions) {
       qnaDict[date] = { questions:  questions[date], answers: 0 }
@@ -178,26 +172,21 @@ export function myContributions(tokenObj) {
     return qnaList;
   }
 
-  let questions = {};
-  apiInstance(tokenObj)
+  return apiInstance(tokenObj)
     .get('my-question-per-date-count')
-    .then(resp => questions = resp.data)
-    .catch(err => {
+    .then(resp => {
+      let questions = resp.data;
+      return apiInstance(tokenObj)
+        .get('my-answer-per-date-count')
+        .then(resp => makeList(questions, resp.data))
+        .catch(err => {
+          //log err if possible
+          return null;
+        });
+    }).catch(err => {
       //log err if possible
       return null;
     });
-
-  if(questions) {
-    return apiInstance(tokenObj)
-      .get('my-answer-per-date-count')
-      .then(resp => makeList(questions, resp.data))
-      .catch(err => {
-        //log err if possible
-        return null;
-      });
-  } else {
-    return null;
-  }
 }
 
 // set mounted to true on mount and false on unmount

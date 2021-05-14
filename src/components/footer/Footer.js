@@ -25,7 +25,7 @@ export default function Footer() {
         </a>
       </div>
       <div className="text-center p-1 copyright" >
-        © 2021 Copyright:<a href="/"> AskMeAnything</a>
+        © 2021 Copyright: AskMeAnything
       </div>
     </footer>
   );

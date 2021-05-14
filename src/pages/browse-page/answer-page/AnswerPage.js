@@ -96,6 +96,7 @@ export default function AnswerPage(props) {
 
   const onSubmit = () => {
     const newAnswer = {
+      question_id: props.questionId,
       text: text
     };
 

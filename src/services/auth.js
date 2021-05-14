@@ -1,4 +1,5 @@
 import React, {useState, useContext, createContext} from "react";
+import {useHistory} from "react-router-dom";
 import {apiInstance} from './api';
 
 const authContext = createContext({});
@@ -18,14 +19,17 @@ export const useAuth = () => {
 function useProvideAuth() {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
+  const history = useHistory();
 
-  const signin = (email, password) => {
+  const signin = (username, password) => {
     return apiInstance()
-      .post('login', {email, password})
+      .post('login', {username, password})
       .then(resp => {
         const username = resp.data['username'].split('@')[0];
         setUser({username: username});
         setToken(resp.data['access_token']);
+        const waitTime = resp.data['access_token_expiry'] - new Date().getTime() - 1000;
+        setTimeout(refreshToken, waitTime);
         return true;
       }).catch(err => {
         //log err if possible
@@ -33,9 +37,9 @@ function useProvideAuth() {
       });
   };
 
-  const signup = (email, password) => {
+  const signup = (username, password) => {
     return apiInstance()
-      .post('signup', {email, password})
+      .post('signup', {username, password})
       .then(() => true)
       .catch(err => {
         //log err if possible
@@ -70,9 +74,15 @@ function useProvideAuth() {
       });
   };
 
+  const resetAuth = () => {
+    setUser(null);
+    setToken(null);
+    history.push('/');
+  };
+
   return {
     user,
-    tokenObj: {token, refreshToken},
+    tokenObj: {token, resetAuth},
     signin,
     signup,
     signout

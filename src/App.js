@@ -1,6 +1,7 @@
 import {NavBarSignedOut, NavBarSignedIn, PrivateRoute, Footer} from "./components";
 import {ProvideAuth, useAuth} from "./services/auth";
 import {Switch, Route, BrowserRouter} from "react-router-dom";
+import React from "react";
 import "./App.css";
 import {
   LandingPage,
@@ -12,7 +13,15 @@ import {
   QnAPage,
   ContributionsPage
 } from "./pages";
-import React from "react";
+
+function ScrollToTopOnMount(props) {
+  window.scrollTo({
+    top: 0,
+    behavior: "auto"
+  });
+
+  return props.children;
+}
 
 function NavBarOI() {
   const auth = useAuth();
@@ -25,9 +34,9 @@ export default function App() {
   return (
     <BrowserRouter>
       <ProvideAuth>
-        <NavBarOI />
         <div id="content" className="container-fluid">
-            <Switch>
+          <Switch>
+            <ScrollToTopOnMount>
               <Route exact path="/">
                 <LandingPage />
               </Route>
@@ -54,7 +63,9 @@ export default function App() {
                   <ContributionsPage />
                 </Route>
               </PrivateRoute>
-            </Switch>
+            </ScrollToTopOnMount>
+          </Switch>
+        <NavBarOI />
         </div>
         <Footer />
       </ProvideAuth>

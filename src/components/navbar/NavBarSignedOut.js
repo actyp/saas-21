@@ -1,8 +1,8 @@
 import {Alert, Button, Form, Modal, OverlayTrigger, ToggleButton, ToggleButtonGroup, Tooltip} from "react-bootstrap";
+import NavBar from "./NavBar";
 import isEmail from "validator/es/lib/isEmail";
 import {Link} from "react-router-dom";
 import {useEffect, useState} from "react";
-import NavBar from "./NavBar";
 import {useAuth} from "../../services/auth";
 
 /*
@@ -191,7 +191,7 @@ export default function NavBarSignedOut() {
     const toggle_delayed = (f1, f2) => {
       f1() ; setTimeout(() => f2(), 1500)
     }
-    
+
     command[type](email, password).then(resp => {
       if (mounted && resp === null) {
         toggle_delayed(
@@ -209,7 +209,7 @@ export default function NavBarSignedOut() {
   };
 
   return (
-    <NavBar brand="AskMeAnything">
+    <NavBar>
       <div className="ml-auto">
         <Link to="/">
           <OverlayTrigger placement='bottom' overlay={<Tooltip id="tooltip-home">Home</Tooltip>}>

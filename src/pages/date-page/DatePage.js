@@ -21,7 +21,7 @@ export default function DatePage() {
 
   return (
     <>
-      <h3 className="text-center mb-4">Questions per Period</h3>
+      <h3 className="text-center mb-4 pt-4">Questions per Period</h3>
       <LoadingHandler data={data} loading={loading} text="Loading questions per date...">
         <ChartTemplate
           mainChart = 'area'

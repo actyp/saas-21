@@ -6,7 +6,7 @@ import "./QuestionStack.css";
  *        id : int, selected : int (selected question id), setSelected : function
  */
 function Question(props) {
-
+  const username = props.username.split('@')[0];
   const keywords = props.keywords.map((k,i) =>
     k && <Badge key={`keyword-${i}`} variant="light" className="keyword mr-2">{k}</Badge>
   );
@@ -25,7 +25,7 @@ function Question(props) {
         <p> {props.text} </p>
         <div> {keywords} </div>
         <div className="mt-2 text-info text-right">
-          asked by <b> {props.username} </b> on {String(new Date(props.date)).slice(4,21)}
+          asked by <b> {username} </b> on {String(new Date(props.date)).slice(4,21)}
         </div>
       </ListGroup.Item>
   );

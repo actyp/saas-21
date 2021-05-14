@@ -1,19 +1,30 @@
 /* footer */
 footer {
-    background: rgb(197 199 183);
+    background: rgba(173, 173, 245, 0.74);
 }
 
 footer .copyright {
-    background: rgb(179 181 166);
+    background: rgba(173, 173, 245, 0.82);
 }
 
 footer .copyright a{
     color: black;
 }
 
+footer .d-flex {
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
 footer .fas, footer .fab {
     font-weight: 525!important;
     color: black;
+}
+
+@supports not (font-weight: 525) {
+    footer .fas, footer .fab {
+        font-weight: 600!important;
+    }
 }
 
 footer .fas:hover,

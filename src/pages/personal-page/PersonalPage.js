@@ -1,9 +1,10 @@
 import {BodyCards} from "../../components";
+import {typewriter, clock, pen, library} from "../../images";
 
 export default function PersonalPage() {
   const cardList = [
     {
-      imgSource: "https://source.unsplash.com/Uq3gTiPlqRo/450x450",
+      imgSource: typewriter,
       bodyTitle: "My Questions / Answers",
       bodyText: "Check out your asked questions and your provided answers.",
       footerHref: "/personal/qna",
@@ -11,7 +12,7 @@ export default function PersonalPage() {
       btnText: "Show me my progress"
     },
     {
-      imgSource: "https://source.unsplash.com/LPRrEJU2GbQ/450x450",
+      imgSource: clock,
       bodyTitle: "My contributions per day",
       bodyText: "Check out your daily contributions in a graphical and in a tabular scheme.",
       footerHref: "/personal/contributions",
@@ -19,7 +20,7 @@ export default function PersonalPage() {
       btnText: "Show me the statistics"
     },
     {
-      imgSource: "https://source.unsplash.com/i--IN3cvEjg/450x450",
+      imgSource: pen,
       bodyTitle: "Ask a Question",
       bodyText: "You are free to ask any question, anytime.",
       footerHref: "/ask",
@@ -27,7 +28,7 @@ export default function PersonalPage() {
       btnText: "Ask a question"
     },
     {
-      imgSource: "https://source.unsplash.com/_gEKtyIbRSM/450x450",
+      imgSource: library,
       bodyTitle: "Browse and Answer a Question",
       bodyText: "You are free to browse and answer any question.",
       footerHref: "/browse",

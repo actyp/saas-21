@@ -10,7 +10,6 @@ import {
   Brush,
   CartesianGrid,
   Label,
-  LabelList,
   Legend,
   Pie,
   PieChart,
@@ -36,7 +35,8 @@ import {
 // supports string [] in obj value (legend is ok)
 function barChartMain(props) {
   const data = props.isSynced ? props.partData : props.allData;
-  const color = ["#8884d8", "#82ca9d"];
+  const dataLen = data.length;
+  const color = ["#20B2AA", "#FC8F8F"];
 
   return (
     <BarChart data={data}>
@@ -47,7 +47,7 @@ function barChartMain(props) {
       {props.obj.value.map((v, i) =>
         <Bar key={v} dataKey={v} name={v} fill={color[i]}/>
       )}
-      <Brush height={30} stroke="#8884d8"/>
+      <Brush height={30} stroke="#8884d8" startIndex={dataLen < 30 ? 0 : dataLen-30}/>
       <Legend verticalAlign="top" />
     </BarChart>
   );
@@ -56,7 +56,8 @@ function barChartMain(props) {
 // supports string [] in obj value (legend has color issues)
 function areaChartMain(props) {
   const data = props.isSynced ? props.partData : props.allData;
-  const colorId = ["8884d8", "82ca9d"];
+  const dataLen = data.length;
+  const colorId = ["6A5ACD", "FC8F8F"];
 
   return(
     <AreaChart data={data}>
@@ -75,7 +76,7 @@ function areaChartMain(props) {
       {props.obj.value.map((v, i) =>
         <Area key={v} name={v} type="monotone" dataKey={v} sfillOpacity={1} fill={`url(#${colorId[i]})`} />
       )}
-      <Brush height={30} stroke="#8884d8"/>
+      <Brush height={30} stroke="#8884d8" startIndex={dataLen < 30 ? 0 : dataLen-30}/>
       <Legend verticalAlign="top" />
     </AreaChart>
   );
@@ -90,14 +91,14 @@ function areaChartMain(props) {
 // semi supports string [] in obj value (uses obj.value[0] only)
 function pieChartSec(props) {
   const data = props.partData;
+  const dataLen = data.length;
 
   return (
     <PieChart>
       <Pie data={data} dataKey={props.obj.value[0]} nameKey={props.obj.key} cx="60%" cy="48%"
-           paddingAngle={3} innerRadius={180} outerRadius={250} fill="#8884d8"
+           paddingAngle={3} innerRadius={11*dataLen} fill="#4682B4" label={{ position: 'outside' }}
       >
-        <LabelList dataKey={props.obj.key} position="outside" clockWise='2' stroke="#8884d8"/>
-        <Label value="In sync with table" position="center" stroke="#8884d8"/>
+        {dataLen > 5 && <Label value="In sync with table" position="center" stroke="#4682B4"/>}
       </Pie>
       <Tooltip />
     </PieChart>
@@ -107,16 +108,17 @@ function pieChartSec(props) {
 // supports string [] in obj value
 function radarChartSec(props) {
   const data = props.partData;
-  const color = ["#8884d8", "#82ca9d"];
+  const dataLen = data.length;
+  const color = ["#20B2AA", "#FC8F8F"];
 
   return(
-    <RadarChart data={data} innerRadius={50} outerRadius={230} cx="60%" cy="48%">
+    <RadarChart data={data} innerRadius={6*dataLen} cx="60%" cy="48%">
       <PolarGrid gridType="circle"/>
       <PolarAngleAxis dataKey={props.obj.key} />
       <PolarRadiusAxis />
       <Tooltip />
       {props.obj.value.map((v, i) =>
-        <Radar key={v} name={v} dataKey={v} stroke="#8884d8" fill={color[i]} fillOpacity={0.4} />
+        <Radar key={v} name={v} dataKey={v} fill={color[i]} fillOpacity={0.4} />
       )}
     </RadarChart>
   );
@@ -192,9 +194,9 @@ export default function ChartTemplate(props) {
       <ResponsiveContainer width="100%" minHeight="75vh">
         {mainChart}
       </ResponsiveContainer>
-      <p className="text-center text-info">
-        <span>Slide the edges to focus on specific region.</span>
-        <Button variant="outline-info" className="btn-sm ml-3 shadow-none" onClick={() => setIsSynced(!isSynced)}>
+      <p className="text-center text-primary">
+        <span>Slide the whole or the blue edges to focus on specific region.</span>
+        <Button variant="outline-primary" className="btn-sm ml-3 shadow-none" onClick={() => setIsSynced(!isSynced)}>
           {isSynced ? 'Show all' : 'Sync to table'}
         </Button>
       </p>

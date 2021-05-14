@@ -12,6 +12,7 @@ export default function BrowsePage() {
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
   const [keywords, setKeywords] = useState([]);
+  const [showCriteria, setShowCriteria] = useState(false);
   // question selected (selected = question id | null)
   const [selected, setSelected] = useState(null);
   // all fetched questions
@@ -53,7 +54,8 @@ export default function BrowsePage() {
     let filtered = [];
 
     if(keywords.length !== 0){
-      const isFilteredKeyword = (k) => keywords.includes(k);
+      const notEmptyKeywords = keywords.filter(x => x !== "");
+      const isFilteredKeyword = (k) => notEmptyKeywords.includes(k);
       filtered = allQList.filter(q => q.keywords.some(isFilteredKeyword));
     }
 
@@ -62,11 +64,9 @@ export default function BrowsePage() {
       filtered = (filtered.length > 0 ? filtered : allQList).filter(q => isBetweenDates(q.date));
     }
 
-    if(filtered.length > 0) {
-      setCurrentQList(filtered);
-      setCurrentPageNum(0);
-      setResetSelectedPage(true);
-    }
+    setCurrentQList(filtered);
+    setCurrentPageNum(0);
+    setResetSelectedPage(true);
   };
 
   const onClear = () => {
@@ -78,7 +78,7 @@ export default function BrowsePage() {
 
   return (
     <Col md={5} className="mx-auto mt-4 px-1">
-      <h3 className="text-center mb-4">
+      <h3 className="text-center mb-4 pt-4">
         {selected === null ? "Browse Questions" : "Answer Question"}
       </h3>
       { alterView(
@@ -90,30 +90,30 @@ export default function BrowsePage() {
             setDateTo={setDateTo}
             keywords={keywords}
             setKeywords={setKeywords}
+            showCriteria={showCriteria}
+            setShowCriteria={setShowCriteria}
             onFilter={onFilter}
             onClear={onClear}
           />,
           <Button
             variant="light"
             className="mb-2"
-            onClick={() => {
-              setDateFrom("");
-              setDateTo("");
-              setKeywords([]);
-              setSelected(null);
-            }}
+            onClick={() => setSelected(null)}
           >
             <i className="fas fa-arrow-alt-circle-left"> Browse all questions </i>
           </Button>
         )
       }
       <LoadingHandler data={allQList} loading={loading} text="Loading answers...">
-        <QuestionStack
-          scrollToTop="auto"
-          questionList={currentQPage}
-          selected={selected}
-          setSelected={setSelected}
-        />
+        {currentQPage.length > 0
+          ? <QuestionStack
+            scrollToTop="auto"
+            questionList={currentQPage}
+            selected={selected}
+            setSelected={setSelected}
+          />
+          : <h5 className="text-center">Nothing Found.</h5>
+        }
         { alterView(
             <Alert
               variant="success"
@@ -121,6 +121,7 @@ export default function BrowsePage() {
             >
               <h4>Sign in to view more questions</h4>
             </Alert>,
+            currentQPage.length > 0 &&
             <Paginate
               pageCount={pageCount}
               setCurrentPageNum={setCurrentPageNum}

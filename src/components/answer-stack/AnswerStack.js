@@ -5,11 +5,12 @@ import "./AnswerStack.css";
  * props: text : string, username : string, date : string
  */
 function Answer(props) {
+  const username = props.username.split('@')[0];
   return(
     <ListGroup.Item className="overflow-auto">
       <p> {props.text} </p>
       <div className="mt-2 text-info text-right">
-        answered by <b> {props.username} </b> on {String(new Date(props.date)).slice(4,21)}
+        answered by <b> {username} </b> on {String(new Date(props.date)).slice(4,21)}
       </div>
     </ListGroup.Item>
   );
