@@ -69,7 +69,7 @@ function AskForm(props) {
                 <InputGroup.Text><i className="fas fa-tag"> </i></InputGroup.Text>
               </InputGroup.Prepend>
               <Form.Control
-                placeholder="Question;related;keywords;tags"
+                placeholder="question;related;keywords;tags"
                 onChange={e => props.setKeywords(
                   e.target.value.split(';').filter(x => x !== "").map(k => k.toLowerCase()))
                 }
@@ -117,9 +117,9 @@ function AskForm(props) {
 
 function Preview(props) {
   let formData = {
-    title: "Question heading / title",
-    text: "Question text",
-    keywords: ["question", "related", "keywords", "tags"]
+    title: "",
+    text: "",
+    keywords: []
   }
 
   for(const v in formData) {
