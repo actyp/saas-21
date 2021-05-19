@@ -4,6 +4,17 @@
     }
 }
 
+@media(orientation: landscape) and (max-width: 800px) {
+    .card-deck {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .card-deck .card {
+        margin-bottom: 15px;
+    }
+}
+
 .card-deck {
     padding-top: 4rem;
     margin-right: 0.1%;

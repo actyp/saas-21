@@ -2,6 +2,34 @@ import {ChartTemplate, LoadingHandler} from "../../components";
 import {questionsPerKeyword, useFetchDataOnMount} from "../../services/api";
 import {useState} from "react";
 
+function findTenMostFrequentKeywords(data) {
+  if (data.length <= 10)
+    return data;
+
+  const compare = (a, b) => {
+    if (a['questions'] === b['questions']) {
+      return a['keyword'] === b['keyword'] ? 0 : (a['keyword'] < b['keyword'] ? -1 : 1);
+    } else {
+      return a['questions'] - b['questions'];
+    }
+  }
+
+  let desired = [];
+  for (const obj of data) {
+    if (desired.length < 10) {
+      desired.push(obj)
+      if (desired.length === 10) {
+        desired.sort(compare);
+      }
+    } else {
+      if (obj['questions'] > desired[0]['questions']) {
+        desired[0] = obj;
+        desired.sort(compare);
+      }
+    }
+  }
+  return desired;
+}
 
 export default function KeywordPage() {
   const [loading, setLoading] = useState(true);
@@ -28,6 +56,7 @@ export default function KeywordPage() {
           secChart = 'pie'
           obj = {{key: 'keyword', value: ['questions']}}
           data = {data}
+          transformData = {findTenMostFrequentKeywords}
           table = {{keyHeading : 'Keyword', valueHeading : ['Questions tagged']}}
         />
       </LoadingHandler>

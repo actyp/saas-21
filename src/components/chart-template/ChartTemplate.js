@@ -15,7 +15,6 @@ import {
   PieChart,
   PolarAngleAxis,
   PolarGrid,
-  PolarRadiusAxis,
   Radar,
   RadarChart,
   ResponsiveContainer,
@@ -95,10 +94,10 @@ function pieChartSec(props) {
 
   return (
     <PieChart>
-      <Pie data={data} dataKey={props.obj.value[0]} nameKey={props.obj.key} cx="60%" cy="48%"
-           paddingAngle={3} innerRadius={11*dataLen} fill="#4682B4" label={{ position: 'outside' }}
+      <Pie data={data} dataKey={props.obj.value[0]} nameKey={props.obj.key} cx="50%" cy="50%"
+           paddingAngle={3} innerRadius='50%' fill="#4682B4" label={{ position: 'outside' }}
       >
-        {dataLen > 5 && <Label value="In sync with table" position="center" stroke="#4682B4"/>}
+        {dataLen > 5 && <Label value="Top 10" position="center" stroke="#4682B4"/>}
       </Pie>
       <Tooltip />
     </PieChart>
@@ -108,14 +107,12 @@ function pieChartSec(props) {
 // supports string [] in obj value
 function radarChartSec(props) {
   const data = props.partData;
-  const dataLen = data.length;
   const color = ["#20B2AA", "#FC8F8F"];
 
   return(
-    <RadarChart data={data} innerRadius={6*dataLen} cx="60%" cy="48%">
+    <RadarChart data={data} innerRadius='20%' cx="50%" cy="50%">
       <PolarGrid gridType="circle"/>
       <PolarAngleAxis dataKey={props.obj.key} />
-      <PolarRadiusAxis />
       <Tooltip />
       {props.obj.value.map((v, i) =>
         <Radar key={v} name={v} dataKey={v} fill={color[i]} fillOpacity={0.4} />
@@ -129,6 +126,7 @@ function radarChartSec(props) {
  *  secChart  : 'pie'|'radar'
  *  obj : { key : string, value : string [] }
  *  data : obj []
+ *  transformData : fn for transforming data for secChart
  *  table : { keyHeading : string, valueHeading : string [] }
  */
 export default function ChartTemplate(props) {
@@ -165,7 +163,7 @@ export default function ChartTemplate(props) {
   const getSecChart = () => {
     const chartProps = {
       obj: props.obj,
-      partData: currentTPage
+      partData: props.transformData ? props.transformData(allData) : currentTPage
     };
     switch (props.secChart) {
       case 'pie'  : return pieChartSec({...chartProps});

@@ -104,7 +104,7 @@ export default function BrowsePage() {
           </Button>
         )
       }
-      <LoadingHandler data={allQList} loading={loading} text="Loading answers...">
+      <LoadingHandler data={allQList} loading={loading} text="Loading questions...">
         {currentQPage.length > 0
           ? <QuestionStack
             scrollToTop="auto"

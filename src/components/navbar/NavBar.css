@@ -1,5 +1,7 @@
+@import url('https://fonts.googleapis.com/css2?family=Comic+Neue:ital,wght@1,700&display=swap');
+
 .navbar-brand {
-    font-family: cursive;
+    font-family: 'Comic Sans MS', 'Comic Neue', cursive;
 }
 
 .navbar-toggler {

@@ -1,3 +1,27 @@
+@media(max-width: 800px) {
+    p .btn {
+        margin-top: 0.5rem;
+    }
+
+    div .row {
+        display: flex;
+        flex-direction: column-reverse;
+        padding-top: 2rem;
+    }
+
+    .col .recharts-responsive-container {
+        min-height: 100vh;
+    }
+
+    .col table {
+        width: 100%!important;
+    }
+
+    .recharts-layer .recharts-polar-angle-axis-ticks text {
+        text-anchor: middle;
+    }
+}
+
 svg {
     overflow: visible;
 }

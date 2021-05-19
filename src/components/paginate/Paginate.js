@@ -23,8 +23,8 @@ export default function Paginate(props) {
       previousLabel={"prev"}
       nextLabel={"next"}
       breakLabel={"..."}
-      marginPagesDisplayed={2}
-      pageRangeDisplayed={5}
+      marginPagesDisplayed={1}
+      pageRangeDisplayed={1}
       containerClassName={"pagination"}
       subContainerClassName={"pages pagination"}
       activeClassName={"active"}

@@ -1,3 +1,19 @@
+@media(max-width: 800px) {
+    .pagination > li > a {
+        border-radius: 10px!important;
+        padding: 2px 5px!important;
+    }
+    .pagination > .active > a,
+    .pagination > .active > a:hover,
+    .pagination > .active > a:focus {
+        background-color: transparent!important;
+        border-bottom: 2px solid #17a2b8!important;
+        border-bottom-right-radius: 3px!important;
+        border-bottom-left-radius: 3px!important;
+        color: #000!important;
+    }
+}
+
 .pagination {
     margin-top: 2rem;
     display: flex;
@@ -15,7 +31,7 @@
 
 .pagination > li > a {
     border-radius: 50%;
-    padding: 5px 15px;
+    padding: 5px 10px;
     margin: 3px;
     outline: none;
     cursor: pointer;
