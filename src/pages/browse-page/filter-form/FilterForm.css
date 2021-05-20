@@ -1,4 +1,4 @@
-@media(orientation: portrait) and (max-width: 800px) {
+@media(orientation: portrait) and (max-width: 500px) {
     #filter-form-keywords {
         width: auto;
     }
