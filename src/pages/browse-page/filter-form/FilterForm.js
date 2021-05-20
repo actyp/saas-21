@@ -80,6 +80,7 @@ export default function FilterForm(props) {
             <InputGroup.Text><i className="fas fa-tag"> </i></InputGroup.Text>
           </InputGroup.Prepend>
           <Form.Control
+            id="filter-form-keywords"
             placeholder="Keywords to filter...  e.g. forty;two"
             value={props.keywords.join(';')}
             onChange={e => {
@@ -87,7 +88,7 @@ export default function FilterForm(props) {
               props.setKeywords(e.target.value === "" ? [] : e.target.value.split(';'));
             }}
           />
-          <InputGroup.Append>
+          <InputGroup.Append id="filter-form-buttons">
             <Button
               variant="outline-info shadow-none"
               disabled={!props.dateFrom.length && !props.dateTo.length && !props.keywords.length}

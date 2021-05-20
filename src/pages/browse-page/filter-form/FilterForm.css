@@ -1,3 +1,21 @@
+@media(orientation: portrait) and (max-width: 800px) {
+    #filter-form-keywords {
+        width: auto;
+    }
+
+    #filter-form-buttons {
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 1rem;
+    }
+
+    #filter-form-buttons > :first-child {
+        border-bottom-left-radius: 0.25rem;
+        border-top-left-radius: 0.25rem;
+    }
+
+}
+
 #filter-form input:focus {
     box-shadow: none!important;
 }
