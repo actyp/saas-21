@@ -22,7 +22,7 @@ export class QuestionProviderService {
   };
   constructor(private redisClient: RedisClientService) {}
 
-  decode_id(id: string) {
+  static decode_id(id: string) {
     const decoded = Buffer.from(id, 'base64').toString();
     const username = decoded.substring(0, decoded.length - 21);
     const date = decoded.substring(decoded.length - 20, decoded.length - 1);
@@ -30,7 +30,7 @@ export class QuestionProviderService {
   }
 
   async get_question(question_id: string) {
-    const [username, date] = this.decode_id(question_id);
+    const [username, date] = QuestionProviderService.decode_id(question_id);
 
     const question = await this.redisClient.hgetall('question:' + question_id);
     const keywords = await this.redisClient.smembers(
@@ -45,7 +45,7 @@ export class QuestionProviderService {
   }
 
   async get_answer(answer_id: string, include_question_id = true) {
-    const [username, date] = this.decode_id(answer_id);
+    const [username, date] = QuestionProviderService.decode_id(answer_id);
 
     const answer = await this.redisClient.hgetall('answer:' + answer_id);
 
@@ -81,7 +81,7 @@ export class QuestionProviderService {
 
   async my_questions(username: string) {
     return await Promise.all(
-      (await this.redisClient.zrange(username + ':questions', 0, -1)).map(
+      (await this.redisClient.zrevrange(username + ':questions', 0, -1)).map(
         async (question_id) => await this.get_question(question_id),
       ),
     );
@@ -97,8 +97,9 @@ export class QuestionProviderService {
     const q2a: Record<string, any>[][] = [];
     let id;
     for (const answer of answers) {
-      id = String(answer.question_id);
-      delete answer.question_id;
+      id = new Date(
+        QuestionProviderService.decode_id(answer.question_id)[1],
+      ).getTime();
       if (q2a[id] === undefined) {
         q2a[id] = [answer];
       } else {
@@ -107,10 +108,10 @@ export class QuestionProviderService {
     }
 
     const re = [];
-    for (const question_id in q2a) {
-      re.push({
-        question: await this.get_question(question_id),
-        answers: q2a[question_id],
+    for (const id in q2a) {
+      re.unshift({
+        question: await this.get_question(q2a[id][0].question_id),
+        answers: q2a[id],
       });
     }
 
@@ -124,8 +125,10 @@ export class QuestionProviderService {
 
     return await Promise.all(
       (
-        await this.redisClient.smembers(
+        await this.redisClient.zrevrange(
           'question:' + data.question_id + ':answers',
+          0,
+          -1,
         )
       ).map(async (answer_id) => await this.get_answer(answer_id, false)),
     );
