@@ -29,9 +29,9 @@ export default function Paginate(props) {
       subContainerClassName={"pages pagination"}
       activeClassName={"active"}
       pageCount={props.pageCount}
-      forcePage={props.resetSelectedPage ? 0 : undefined}
+      forcePage={props.resetPage && (props.resetPage.status ? props.resetPage.pageNum : undefined)}
       onPageChange={(e) => {
-        props.setResetSelectedPage(false);
+        props.setResetPage && props.setResetPage({status: false, pageNum: 0});
         props.setCurrentPageNum(e.selected);
         props.scrollToTop && scrollToTop();
       }}

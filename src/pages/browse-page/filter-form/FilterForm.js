@@ -4,7 +4,6 @@ import {useState} from "react";
 import "./FilterForm.css";
 
 export default function FilterForm(props) {
-  const [disableClear, setDisableClear] = useState(true);
   const [error, setError] = useState({});
 
   const formValid = () => {
@@ -94,7 +93,6 @@ export default function FilterForm(props) {
               disabled={!props.dateFrom.length && !props.dateTo.length && !props.keywords.length}
               onClick={() => {
                 if(formValid()) {
-                  setDisableClear(false);
                   props.setShowCriteria(true);
                   props.onFilter();
                 }
@@ -104,9 +102,8 @@ export default function FilterForm(props) {
             </Button>
             <Button
               variant="outline-danger shadow-none"
-              disabled={disableClear}
+              disabled={props.clearDisabled}
               onClick={() => {
-                setDisableClear(true);
                 props.setShowCriteria(false);
                 props.onClear();
               }}

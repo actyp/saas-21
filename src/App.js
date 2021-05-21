@@ -20,7 +20,7 @@ function ScrollToTopOnMount(props) {
     behavior: "auto"
   });
 
-  return props.children;
+  return props.content;
 }
 
 function NavBarOI() {
@@ -35,37 +35,36 @@ export default function App() {
     <BrowserRouter>
       <ProvideAuth>
         <div id="content" className="container-fluid">
+          <NavBarOI />
           <Switch>
-            <ScrollToTopOnMount>
               <Route exact path="/">
-                <LandingPage />
+                <ScrollToTopOnMount content={<LandingPage />} />
               </Route>
               <Route exact path="/keyword">
-                <KeywordPage />
+                <ScrollToTopOnMount content={<KeywordPage />} />
               </Route>
               <Route exact path="/date">
-                <DatePage />
+                <ScrollToTopOnMount content={<DatePage />} />
               </Route>
               <Route exact path="/browse">
-                <BrowsePage />
+                <ScrollToTopOnMount content={<BrowsePage />} />
               </Route>
               <PrivateRoute>
                 <Route exact path="/ask">
-                  <AskPage />
+                  <ScrollToTopOnMount content={<AskPage />} />
                 </Route>
                 <Route exact path="/personal">
-                  <PersonalPage />
+                  <ScrollToTopOnMount content={<PersonalPage />} />
                 </Route>
                 <Route exact path="/personal/qna">
-                  <QnAPage />
+                  <ScrollToTopOnMount content={<QnAPage />} />
                 </Route>
                 <Route exact path="/personal/contributions">
-                  <ContributionsPage />
+                  <ScrollToTopOnMount content={<ContributionsPage />} />
                 </Route>
               </PrivateRoute>
-            </ScrollToTopOnMount>
+
           </Switch>
-        <NavBarOI />
         </div>
         <Footer />
       </ProvideAuth>

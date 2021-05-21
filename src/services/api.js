@@ -94,9 +94,9 @@ export function askQuestion(data, tokenObj) {
 }
 
 // browse-page
-export function allQuestions() {
+export function allQuestions(start, stop) {
   return apiInstance()
-    .get('questions?start=0')
+    .get(`questions?start=${start}&stop=${stop}`)
     .then(resp => resp.data)
     .catch(err => {
       //log err if possible
@@ -169,6 +169,7 @@ export function myContributions(tokenObj) {
         'answers': qnaDict[date]['answers']
       });
     }
+    qnaList.sort((a,b) => new Date(a.date) - new Date(b.date));
     return qnaList;
   }
 

@@ -56,7 +56,10 @@ function useProvideAuth() {
         return true;
       }).catch(err => {
         //log err if possible
-        return null;
+        //always sign out
+        setToken(null);
+        setUser(null);
+        return true;
       });
   };
 

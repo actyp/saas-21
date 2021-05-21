@@ -213,8 +213,6 @@ export default function ChartTemplate(props) {
             pageCount={pageCount}
             setCurrentPageNum={setCurrentTablePage}
             scrollToTop={false}
-            resetSelectedPage={false}
-            setResetSelectedPage={() => null}
           />
         </Col>
       </Row>

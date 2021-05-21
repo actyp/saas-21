@@ -4,6 +4,7 @@ import {useState} from "react";
 
 export default function QuestionColumn(props) {
   const [currentPageNum, setCurrentPageNum] = useState(0);
+  const [resetPage, setResetPage] = useState({status: false, pageNum: 0});
   const questions = props.questions;
 
   const paginate = () => {
@@ -20,7 +21,14 @@ export default function QuestionColumn(props) {
   return (
     <>
       {props.selected !== null &&
-      <Button variant="light" className="mb-2" onClick={() => props.setSelected(null)}>
+      <Button
+        variant="light"
+        className="mb-2"
+        onClick={() => {
+          setResetPage({status: true, pageNum: currentPageNum});
+          props.setSelected(null);
+        }}
+      >
         <i className="fas fa-arrow-alt-circle-left"> {props.backBtnText} </i>
       </Button>
       }
@@ -32,12 +40,12 @@ export default function QuestionColumn(props) {
       />
       {props.selected === null
         ? <Paginate
-          pageCount={pageCount}
-          setCurrentPageNum={setCurrentPageNum}
-          scrollToTop={true}
-          resetSelectedPage={false}
-          setResetSelectedPage={() => null}
-        />
+            pageCount={pageCount}
+            setCurrentPageNum={setCurrentPageNum}
+            scrollToTop={true}
+            resetPage={resetPage}
+            setResetPage={setResetPage}
+          />
         : props.children
       }
     </>
