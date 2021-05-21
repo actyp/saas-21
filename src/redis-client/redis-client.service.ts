@@ -25,4 +25,8 @@ export class RedisClientService {
   async zrange(key: string, start: number, stop: number): Promise<string[]> {
     return this._client.zrange(key, start, stop);
   }
+
+  async zrevrange(key: string, start: number, stop: number): Promise<string[]> {
+    return this._client.zrevrange(key, start, stop);
+  }
 }
