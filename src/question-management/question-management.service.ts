@@ -139,8 +139,9 @@ export class QuestionManagementService {
         unix,
         answer_id,
       )) &&
-      (await this.redisClient.sadd(
+      (await this.redisClient.zadd(
         'question:' + data.question_id + ':answers',
+        unix,
         answer_id,
       )) &&
       (await this.redisClient.hincrby(
