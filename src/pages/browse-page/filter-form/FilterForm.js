@@ -32,7 +32,7 @@ export default function FilterForm(props) {
       valid = false;
     }
 
-    if (props.keywords.every(k => k === "")) {
+    if (props.keywords.length > 0 && props.keywords.every(k => k === "")) {
       errors['keywords'] = "Keywords should not be blank.";
       valid = false;
     }
