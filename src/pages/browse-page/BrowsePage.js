@@ -108,36 +108,36 @@ export default function BrowsePage() {
       <h3 className="text-center mb-4 pt-4">
         {selected === null ? "Browse Questions" : "Answer Question"}
       </h3>
-      { alterView(
-        null,
-          <FilterForm
-            dateFrom={dateFrom}
-            setDateFrom={setDateFrom}
-            dateTo={dateTo}
-            setDateTo={setDateTo}
-            keywords={keywords}
-            setKeywords={setKeywords}
-            clearDisabled={!showFiltered}
-            showCriteria={showCriteria}
-            setShowCriteria={setShowCriteria}
-            onFilter={onFilter}
-            onClear={onClear}
-          />,
-          <Button
-            variant="light"
-            className="mb-2"
-            onClick={() => {
-              const pageNum = showFiltered ? filteredPageNum : allPageNum;
-              setResetPage({status: true, pageNum: pageNum});
-              setSelected(null);
-            }}
-          >
-            <i className="fas fa-arrow-alt-circle-left"> Browse all questions </i>
-          </Button>
-        )
-      }
       <LoadingHandler data={allQList} loading={loading} text="Loading questions...">
-        {currentQPage.length > 0
+        { alterView(
+          null,
+            <FilterForm
+              dateFrom={dateFrom}
+              setDateFrom={setDateFrom}
+              dateTo={dateTo}
+              setDateTo={setDateTo}
+              keywords={keywords}
+              setKeywords={setKeywords}
+              clearDisabled={!showFiltered}
+              showCriteria={showCriteria}
+              setShowCriteria={setShowCriteria}
+              onFilter={onFilter}
+              onClear={onClear}
+            />,
+            <Button
+              variant="light"
+              className="mb-2"
+              onClick={() => {
+                const pageNum = showFiltered ? filteredPageNum : allPageNum;
+                setResetPage({status: true, pageNum: pageNum});
+                setSelected(null);
+              }}
+            >
+              <i className="fas fa-arrow-alt-circle-left"> Browse all questions </i>
+            </Button>
+          )
+        }
+        { currentQPage.length > 0
           ? <QuestionStack
             scrollToTop="auto"
             questionList={currentQPage}
@@ -162,7 +162,7 @@ export default function BrowsePage() {
                 resetPage={resetPage}
                 setResetPage={setResetPage}
               />
-              {allPageNum === pageCount - 1 && !showFiltered && !loadMore.noMoreQs &&
+              { allPageNum === pageCount - 1 && !showFiltered && !loadMore.noMoreQs &&
                 <Col className="py-2">
                   <Row className="justify-content-center">
                     <Button
@@ -174,7 +174,7 @@ export default function BrowsePage() {
                     </Button>
                   </Row>
                   <Row className="justify-content-center mt-1">
-                    {loadMore.failed &&
+                    { loadMore.failed &&
                       <span className="text-danger text-center">
                         Something went wrong, try again later
                       </span>
