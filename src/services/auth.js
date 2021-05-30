@@ -1,4 +1,4 @@
-import React, {useState, useContext, createContext} from "react";
+import React, {useState, useContext, createContext, useEffect} from "react";
 import {useHistory} from "react-router-dom";
 import {apiInstance} from './api';
 
@@ -28,10 +28,12 @@ function useProvideAuth() {
         const username = resp.data['username'].split('@')[0];
         setUser({username: username});
         setToken(resp.data['access_token']);
+        localStorage.setItem('user', JSON.stringify({username: username}));
         const waitTime = resp.data['access_token_expiry'] - new Date().getTime() - 1000;
         setTimeout(refreshToken, waitTime);
         return true;
-      }).catch(err => {
+      })
+      .catch(err => {
         //log err if possible
         return null;
       });
@@ -50,15 +52,14 @@ function useProvideAuth() {
   const signout = () => {
     return apiInstance()
       .post('logout', {})
-      .then(() => {
-        setToken(null);
-        setUser(null);
-        return true;
-      }).catch(err => {
+      .catch(err => {
         //log err if possible
+      })
+      .then(() => {
         //always sign out
         setToken(null);
         setUser(null);
+        localStorage.removeItem('user');
         return true;
       });
   };
@@ -70,8 +71,9 @@ function useProvideAuth() {
         setToken(resp.data['access_token']);
         const waitTime = resp.data['access_token_expiry'] - new Date().getTime() - 1000;
         setTimeout(refreshToken, waitTime);
-        return resp.data.token;
-      }).catch(err => {
+        return true;
+      })
+      .catch(err => {
         //log err if possible
         return null;
       });
@@ -80,8 +82,19 @@ function useProvideAuth() {
   const resetAuth = () => {
     setUser(null);
     setToken(null);
+    localStorage.removeItem('user');
     history.push('/');
   };
+
+  // check for previous sign in and if so, refresh and on error resetAuth
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if(user) {
+      refreshToken().then(resp => {
+        resp ? setUser(user) : resetAuth();
+        });
+    }
+  }, []);
 
   return {
     user,

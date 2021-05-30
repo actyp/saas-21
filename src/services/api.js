@@ -184,7 +184,8 @@ export function myContributions(tokenObj) {
           //log err if possible
           return null;
         });
-    }).catch(err => {
+    })
+    .catch(err => {
       //log err if possible
       return null;
     });
