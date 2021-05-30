@@ -67,9 +67,11 @@ export class AppController {
     } else {
       res.cookie('refresh_token', this.microservice_response.refresh_token, {
         httpOnly: true,
-        secure: true,
+        //        secure: true,
+        expires: new Date(this.microservice_response.refresh_token_expiry),
       });
       delete this.microservice_response.refresh_token;
+      delete this.microservice_response.refresh_token_expiry;
       res.status(HttpStatus.OK).json(this.microservice_response).send();
     }
   }
