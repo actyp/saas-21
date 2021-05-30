@@ -87,9 +87,10 @@ export class AuthService {
       { secret: jwtConstants.access_token_secret, expiresIn: '900s' },
     );
 
+    const refresh_token_expiry = new Date(new Date().getTime() + 432000 * 1000);
     const refresh_token = this.jwtService.sign(
       { username: username },
-      { expiresIn: '5400s' },
+      { expiresIn: '432000s' },
     );
     const ok = await this.redisClient.hmset(username, {
       refresh_token: refresh_token,
@@ -104,6 +105,7 @@ export class AuthService {
       access_token: access_token,
       access_token_expiry: access_token_expiry.getTime(),
       refresh_token: refresh_token,
+      refresh_token_expiry: refresh_token_expiry.getTime(),
     };
   }
 
