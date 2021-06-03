@@ -12,6 +12,7 @@ import {
   Scope,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
+import { timeout } from 'rxjs/operators';
 
 @Controller({ path: 'api', scope: Scope.REQUEST })
 export class AppController {
@@ -79,22 +80,25 @@ export class AppController {
   async client_send(
     client: ClientProxy,
     res,
-    body,
     pattern: string,
+    body,
     on_complete_callback,
   ) {
-    client.send(pattern, JSON.stringify(body)).subscribe(
-      (value: any) => {
-        this.microservice_response = value;
-      },
-      (error) => {
-        this.logger.error(error);
-        res.status(HttpStatus.INTERNAL_SERVER_ERROR).send();
-      },
-      () => {
-        on_complete_callback(res);
-      },
-    );
+    client
+      .send(pattern, JSON.stringify(body))
+      .pipe(timeout(2000))
+      .subscribe(
+        (value: any) => {
+          this.microservice_response = value;
+        },
+        (error) => {
+          this.logger.error(error);
+          res.status(HttpStatus.INTERNAL_SERVER_ERROR).send();
+        },
+        () => {
+          on_complete_callback(res);
+        },
+      );
   }
 
   @Get('refresh')
@@ -102,8 +106,8 @@ export class AppController {
     return this.client_send(
       this.auth_client,
       res,
-      { refresh_token: req.cookies.refresh_token },
       'refresh',
+      { refresh_token: req.cookies.refresh_token },
       this.respond,
     );
   }
@@ -113,8 +117,8 @@ export class AppController {
     return this.client_send(
       this.auth_client,
       res,
-      body,
       'login',
+      body,
       this.respond_to_login,
     );
   }
@@ -124,8 +128,8 @@ export class AppController {
     return this.client_send(
       this.auth_client,
       res,
-      { refresh_token: req.cookies.refresh_token },
       'logout',
+      { refresh_token: req.cookies.refresh_token },
       this.respond,
     );
   }
@@ -135,8 +139,8 @@ export class AppController {
     return this.client_send(
       this.auth_client,
       res,
-      body,
       'signup',
+      body,
       this.respond,
     );
   }
@@ -147,8 +151,8 @@ export class AppController {
     return this.client_send(
       this.question_management_client,
       res,
-      body,
       'create_question',
+      body,
       this.respond,
     );
   }
@@ -159,8 +163,8 @@ export class AppController {
     return this.client_send(
       this.question_management_client,
       res,
-      body,
       'create_answer',
+      body,
       this.respond,
     );
   }
@@ -170,8 +174,8 @@ export class AppController {
     return this.client_send(
       this.question_provider_client,
       res,
-      { start: query.start, stop: query.stop },
       'questions',
+      { start: query.start, stop: query.stop },
       this.respond,
     );
   }
@@ -181,8 +185,8 @@ export class AppController {
     return this.client_send(
       this.question_provider_client,
       res,
-      { access_token: AppController.jwt_from_header(req) },
       'my_questions',
+      { access_token: AppController.jwt_from_header(req) },
       this.respond,
     );
   }
@@ -192,8 +196,8 @@ export class AppController {
     return this.client_send(
       this.question_provider_client,
       res,
-      { access_token: AppController.jwt_from_header(req) },
       'my_answers',
+      { access_token: AppController.jwt_from_header(req) },
       this.respond,
     );
   }
@@ -203,8 +207,8 @@ export class AppController {
     return this.client_send(
       this.question_provider_client,
       res,
-      { question_id: query.id },
       'answers_per_question',
+      { question_id: query.id },
       this.respond,
     );
   }
@@ -214,8 +218,8 @@ export class AppController {
     return this.client_send(
       this.question_provider_client,
       res,
-      {},
       'question_per_keyword_count',
+      {},
       this.respond,
     );
   }
@@ -225,8 +229,8 @@ export class AppController {
     return this.client_send(
       this.question_provider_client,
       res,
-      {},
       'question_per_date_count',
+      {},
       this.respond,
     );
   }
@@ -236,8 +240,8 @@ export class AppController {
     return this.client_send(
       this.question_provider_client,
       res,
-      { access_token: AppController.jwt_from_header(req) },
       'my_question_per_date_count',
+      { access_token: AppController.jwt_from_header(req) },
       this.respond,
     );
   }
@@ -247,8 +251,8 @@ export class AppController {
     return this.client_send(
       this.question_provider_client,
       res,
-      { access_token: AppController.jwt_from_header(req) },
       'my_answer_per_date_count',
+      { access_token: AppController.jwt_from_header(req) },
       this.respond,
     );
   }
