@@ -62,7 +62,7 @@ export class AppController {
   async answers_per_question(@Payload() payload) {
     const data = this.json_parse(payload);
 
-    return this.questionProvider.answers_per_question(data);
+    return this.questionProvider.answers_per_question(data.question_id);
   }
 
   @MessagePattern('question_per_keyword_count')

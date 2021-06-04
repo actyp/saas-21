@@ -6,10 +6,6 @@ interface QuestionsDto {
   stop: string;
 }
 
-interface AnswersPerQuestionDto {
-  question_id: string;
-}
-
 @Injectable()
 export class QuestionProviderService {
   private readonly status_code = {
@@ -118,15 +114,15 @@ export class QuestionProviderService {
     return re;
   }
 
-  async answers_per_question(data: AnswersPerQuestionDto) {
-    if (data.question_id === undefined) {
+  async answers_per_question(question_id: string) {
+    if (question_id === undefined) {
       return this.status_code[400];
     }
 
     return await Promise.all(
       (
         await this.redisClient.zrevrange(
-          'question:' + data.question_id + ':answers',
+          'question:' + question_id + ':answers',
           0,
           -1,
         )
