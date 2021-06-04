@@ -56,7 +56,7 @@ function barChartMain(props) {
 function areaChartMain(props) {
   const data = props.isSynced ? props.partData : props.allData;
   const dataLen = data.length;
-  const colorId = ["6A5ACD", "FC8F8F"];
+  const colorId = ["20B2AA", "FC8F8F"];
 
   return(
     <AreaChart data={data}>
@@ -64,7 +64,7 @@ function areaChartMain(props) {
         {colorId.map(id =>
           <linearGradient key={id} id={id} x1="0" y1="0" x2="0" y2="1">
             <stop offset="5%" stopColor={'#'+id} stopOpacity={0.8}/>
-            <stop offset="95%" stopColor={'#'+id} stopOpacity={0}/>
+            <stop offset="95%" stopColor={'#'+id} stopOpacity={0.2}/>
           </linearGradient>
         )}
       </defs>
@@ -107,7 +107,8 @@ function pieChartSec(props) {
 // supports string [] in obj value
 function radarChartSec(props) {
   const data = props.partData;
-  const color = ["#20B2AA", "#FC8F8F"];
+  const isSingle = props.obj.value.length === 1;
+  const color = [isSingle ? "#4682B4" : "#20B2AA", "#FC8F8F"];
 
   return(
     <RadarChart data={data} innerRadius='20%' cx="50%" cy="50%">
@@ -115,7 +116,7 @@ function radarChartSec(props) {
       <PolarAngleAxis dataKey={props.obj.key} />
       <Tooltip />
       {props.obj.value.map((v, i) =>
-        <Radar key={v} name={v} dataKey={v} fill={color[i]} fillOpacity={0.4} />
+        <Radar key={v} name={v} dataKey={v} fill={color[i]} fillOpacity={isSingle ? 0.6 : 0.4} />
       )}
     </RadarChart>
   );

@@ -63,7 +63,6 @@ export default function App() {
                   <ScrollToTopOnMount content={<ContributionsPage />} />
                 </Route>
               </PrivateRoute>
-
           </Switch>
         </div>
         <Footer />
