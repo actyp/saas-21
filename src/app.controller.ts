@@ -1,19 +1,25 @@
 import {
+  BeforeApplicationShutdown,
   Controller,
   Get,
   HttpStatus,
   Inject,
   Logger,
+  OnApplicationBootstrap,
   Query,
   Request,
   Res,
 } from '@nestjs/common';
 import { QuestionProviderService } from './question-provider/question-provider.service';
-import { ClientProxy } from '@nestjs/microservices';
+import { ClientProxy, EventPattern } from '@nestjs/microservices';
 import { timeout } from 'rxjs/operators';
 
+const service_name = 'QUESTION_PROVIDER_SERVICE';
+
 @Controller()
-export class AppController {
+export class AppController
+  implements OnApplicationBootstrap, BeforeApplicationShutdown
+{
   private readonly logger = new Logger(AppController.name);
   private readonly status_code = {
     200: { statusCode: 200, message: 'OK' },
@@ -49,22 +55,18 @@ export class AppController {
     return undefined;
   }
 
-  async authenticate(access_token): Promise<any> {
-    let re;
-    this.esb_client
-      .send('authenticate', JSON.stringify({ access_token: access_token }))
+  async authenticate(access_token, access_time): Promise<any> {
+    return this.esb_client
+      .send('authenticate', JSON.stringify({ access_token, access_time }))
       .pipe(timeout(2000))
-      .subscribe(
-        (value: any) => {
-          re = value;
-        },
-        (error) => {
-          this.logger.error(error);
-          re = this.status_code[500];
-        },
-      );
-
-    return re;
+      .toPromise()
+      .then((value) => {
+        return value;
+      })
+      .catch((error) => {
+        this.logger.error(error);
+        return this.status_code[500];
+      });
   }
 
   private static respond(res, data) {
@@ -72,11 +74,36 @@ export class AppController {
       res.statusMessage = data.message;
       res.status(data.statusCode).send();
     } else {
-      res.status(HttpStatus.OK).json(data).send();
+      res.status(HttpStatus.OK).json(data);
     }
   }
 
-  @Get('questions')
+  onApplicationBootstrap() {
+    this.esb_client.emit('service_info', {
+      name: service_name,
+      status: 1,
+    });
+  }
+
+  async beforeApplicationShutdown() {
+    this.logger.warn('Shutting down...');
+    await this.esb_client
+      .emit('service_info', {
+        name: service_name,
+        status: 0,
+      })
+      .toPromise();
+  }
+
+  @EventPattern('healthcheck')
+  healthcheck() {
+    this.esb_client.emit('service_info', {
+      name: service_name,
+      status: 1,
+    });
+  }
+
+  @Get('api/provide/questions')
   async questions(@Query() query, @Res() res) {
     return AppController.respond(
       res,
@@ -87,9 +114,12 @@ export class AppController {
     );
   }
 
-  @Get('my-questions')
+  @Get('api/provide/my-questions')
   async my_questions(@Request() req, @Res() res) {
-    const user = await this.authenticate(AppController.jwt_from_header(req));
+    const user = await this.authenticate(
+      AppController.jwt_from_header(req),
+      Date.now(),
+    );
 
     if ('statusCode' in user) {
       return AppController.respond(res, user);
@@ -101,9 +131,12 @@ export class AppController {
     );
   }
 
-  @Get('my-answers')
+  @Get('api/provide/my-answers')
   async my_answers(@Request() req, @Res() res) {
-    const user = await this.authenticate(AppController.jwt_from_header(req));
+    const user = await this.authenticate(
+      AppController.jwt_from_header(req),
+      Date.now(),
+    );
 
     if ('statusCode' in user) {
       return AppController.respond(res, user);
@@ -115,7 +148,7 @@ export class AppController {
     );
   }
 
-  @Get('answers-per-question')
+  @Get('api/provide/answers-per-question')
   async answers_per_question(@Query() query, @Res() res) {
     return AppController.respond(
       res,
@@ -123,7 +156,7 @@ export class AppController {
     );
   }
 
-  @Get('question-per-keyword-count')
+  @Get('api/provide/question-per-keyword-count')
   async question_per_keyword_count(@Res() res) {
     return AppController.respond(
       res,
@@ -131,7 +164,7 @@ export class AppController {
     );
   }
 
-  @Get('question-per-keyword-count')
+  @Get('api/provide/question-per-date-count')
   async question_per_date_count(@Res() res) {
     return AppController.respond(
       res,
@@ -139,9 +172,12 @@ export class AppController {
     );
   }
 
-  @Get('my-question-per-date-count')
+  @Get('api/provide/my-question-per-date-count')
   async my_question_per_date_count(@Request() req, @Res() res) {
-    const user = await this.authenticate(AppController.jwt_from_header(req));
+    const user = await this.authenticate(
+      AppController.jwt_from_header(req),
+      Date.now(),
+    );
 
     if ('statusCode' in user) {
       return AppController.respond(res, user);
@@ -153,9 +189,12 @@ export class AppController {
     );
   }
 
-  @Get('my-answer-per-date-count')
+  @Get('api/provide/my-answer-per-date-count')
   async my_answer_per_date_count(@Request() req, @Res() res) {
-    const user = await this.authenticate(AppController.jwt_from_header(req));
+    const user = await this.authenticate(
+      AppController.jwt_from_header(req),
+      Date.now(),
+    );
 
     if ('statusCode' in user) {
       return AppController.respond(res, user);

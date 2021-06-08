@@ -21,21 +21,17 @@ export class QuestionProviderService {
   constructor(@Inject('DATA_LAYER') private readonly data_layer: ClientProxy) {}
 
   async data_layer_request(pattern: string, body): Promise<any> {
-    let re;
-    this.data_layer
+    return this.data_layer
       .send(pattern, JSON.stringify(body))
       .pipe(timeout(2000))
-      .subscribe(
-        (value: any) => {
-          re = value;
-        },
-        (error) => {
-          this.logger.error(error);
-          re = this.status_code[500];
-        },
-      );
-
-    return re;
+      .toPromise()
+      .then((value) => {
+        return value;
+      })
+      .catch((error) => {
+        this.logger.error(error);
+        return this.status_code[500];
+      });
   }
 
   static decode_id(id: string) {
