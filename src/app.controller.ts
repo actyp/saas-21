@@ -1,19 +1,31 @@
 import {
+  BeforeApplicationShutdown,
   Body,
   Controller,
   Get,
   HttpStatus,
+  Inject,
   Logger,
+  OnApplicationBootstrap,
   Post,
   Request,
   Res,
 } from '@nestjs/common';
+import {
+  ClientProxy,
+  EventPattern,
+  MessagePattern,
+  Payload,
+} from '@nestjs/microservices';
 import { AuthService } from './auth/auth.service';
-import { MessagePattern, Payload, Transport } from '@nestjs/microservices';
 import { JwtService } from '@nestjs/jwt';
 
+const service_name = 'AUTH_SERVICE';
+
 @Controller()
-export class AppController {
+export class AppController
+  implements OnApplicationBootstrap, BeforeApplicationShutdown
+{
   private readonly logger = new Logger(AppController.name);
   private readonly status_code = {
     200: { statusCode: 200, message: 'OK' },
@@ -26,6 +38,8 @@ export class AppController {
   constructor(
     private authService: AuthService,
     private jwtService: JwtService,
+    @Inject('ESB_CLIENT')
+    private readonly esb_client: ClientProxy,
   ) {}
 
   private static respond(res, data) {
@@ -33,7 +47,7 @@ export class AppController {
       res.statusMessage = data.message;
       res.status(data.statusCode).send();
     } else {
-      res.status(HttpStatus.OK).json(data).send();
+      res.status(HttpStatus.OK).json(data);
     }
   }
 
@@ -49,7 +63,7 @@ export class AppController {
       });
       delete data.refresh_token;
       delete data.refresh_token_expiry;
-      res.status(HttpStatus.OK).json(data).send();
+      res.status(HttpStatus.OK).json(data);
     }
   }
 
@@ -61,29 +75,52 @@ export class AppController {
     }
   }
 
-  @MessagePattern('authenticate', Transport.RMQ)
+  onApplicationBootstrap() {
+    this.esb_client.emit('service_info', {
+      name: service_name,
+      status: 1,
+    });
+  }
+
+  async beforeApplicationShutdown() {
+    this.logger.warn('Shutting down...');
+    await this.esb_client
+      .emit('service_info', {
+        name: service_name,
+        status: 0,
+      })
+      .toPromise();
+  }
+
+  @EventPattern('healthcheck')
+  healthcheck() {
+    this.esb_client.emit('service_info', {
+      name: service_name,
+      status: 1,
+    });
+  }
+
+  @MessagePattern('authenticate')
   async authenticate(@Payload() payload) {
-    const data = this.json_parse(payload);
+    const { access_token, access_time } = this.json_parse(payload);
 
     try {
-      this.jwtService.verify(data.access_token);
+      const time_diff = Date.now() - access_time;
+      this.logger.log(`Authenticate time difference: +${time_diff}ms`);
+      this.jwtService.verify(access_token, {
+        clockTimestamp: access_time / 1000,
+      });
     } catch (error) {
+      this.logger.error(error);
       return { statusCode: 401, message: 'Unauthorized' };
     }
 
-    const jwt_decoded: any = this.jwtService.decode(data.refresh_token);
-    const user = await this.authService.data_layer_request('get_user', {
-      username: jwt_decoded.username,
-    });
-
-    if ('statusCode' in user || Object.keys(user).length == 0) {
-      return { statusCode: 401, message: 'Unauthorized' };
-    }
+    const jwt_decoded: any = this.jwtService.decode(access_token);
 
     return { username: jwt_decoded.username };
   }
 
-  @Get('api/refresh')
+  @Get('api/authenticate/refresh')
   async refresh(@Request() req, @Res() res) {
     return this.authService
       .jwt_guard({ refresh_token: req.cookies.refresh_token })
@@ -98,7 +135,7 @@ export class AppController {
       });
   }
 
-  @Post('api/login')
+  @Post('api/authenticate/login')
   async login(@Body() body, @Res() res) {
     return this.authService
       .local_guard(body)
@@ -113,7 +150,7 @@ export class AppController {
       });
   }
 
-  @Post('api/logout')
+  @Post('api/authenticate/logout')
   async logout(@Request() req, @Res() res) {
     return this.authService
       .jwt_guard({ refresh_token: req.cookies.refresh_token })
@@ -128,7 +165,7 @@ export class AppController {
       });
   }
 
-  @Post('api/signup')
+  @Post('api/authenticate/signup')
   async signup(@Body() body, @Res() res) {
     return this.authService
       .signup(body)
