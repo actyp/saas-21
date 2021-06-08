@@ -23,7 +23,7 @@ function useProvideAuth() {
 
   const signin = (username, password) => {
     return apiInstance()
-      .post('login', {username, password})
+      .post('authenticate/login', {username, password})
       .then(resp => {
         const username = resp.data['username'].split('@')[0];
         setUser({username: username});
@@ -41,7 +41,7 @@ function useProvideAuth() {
 
   const signup = (username, password) => {
     return apiInstance()
-      .post('signup', {username, password})
+      .post('authenticate/signup', {username, password})
       .then(() => true)
       .catch(err => {
         //log err if possible
@@ -51,7 +51,7 @@ function useProvideAuth() {
 
   const signout = () => {
     return apiInstance()
-      .post('logout', {})
+      .post('authenticate/logout', {})
       .catch(err => {
         //log err if possible
       })
@@ -66,7 +66,7 @@ function useProvideAuth() {
 
   const refreshToken = () => {
     return apiInstance()
-      .get('refresh')
+      .get('authenticate/refresh')
       .then(resp => {
         setToken(resp.data['access_token']);
         const waitTime = resp.data['access_token_expiry'] - new Date().getTime() - 1000;

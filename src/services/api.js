@@ -45,7 +45,7 @@ export function apiInstance({token, resetAuth} = {}) {
 // keyword-page
 export function questionsPerKeyword() {
   return apiInstance()
-    .get('question-per-keyword-count')
+    .get('provide/question-per-keyword-count')
     .then(resp => {
       let key_que = [];
       for(const key in resp.data) {
@@ -65,7 +65,7 @@ export function questionsPerKeyword() {
 // date-page
 export function questionsPerDate() {
   return apiInstance()
-    .get('question-per-date-count')
+    .get('provide/question-per-date-count')
     .then(resp => {
       let date_que = [];
       for(const date in resp.data) {
@@ -85,7 +85,7 @@ export function questionsPerDate() {
 // ask-page
 export function askQuestion(data, tokenObj) {
   return apiInstance(tokenObj)
-    .post('create-question', data)
+    .post('manage/create-question', data)
     .then(resp => resp.data.date)
     .catch(err => {
       //log err if possible
@@ -96,7 +96,7 @@ export function askQuestion(data, tokenObj) {
 // browse-page
 export function allQuestions(start, stop) {
   return apiInstance()
-    .get(`questions?start=${start}&stop=${stop}`)
+    .get(`provide/questions?start=${start}&stop=${stop}`)
     .then(resp => resp.data)
     .catch(err => {
       //log err if possible
@@ -107,7 +107,7 @@ export function allQuestions(start, stop) {
 // answer-page, personal/qna-page (my questions)
 export function answersPerQuestionId(id) {
   return apiInstance()
-    .get(`answers-per-question?id=${id}`)
+    .get(`provide/answers-per-question?id=${id}`)
     .then(resp => resp.data)
     .catch(err => {
       //log err if possible
@@ -118,7 +118,7 @@ export function answersPerQuestionId(id) {
 // answer-page
 export function submitAnswer(data, tokenObj) {
   return apiInstance(tokenObj)
-    .post('create-answer', data)
+    .post('manage/create-answer', data)
     .then(resp => resp.data.date)
     .catch(err => {
       //log err if possible
@@ -129,7 +129,7 @@ export function submitAnswer(data, tokenObj) {
 // personal/qna-page (my questions)
 export function myQuestions(tokenObj) {
   return apiInstance(tokenObj)
-    .get('my-questions')
+    .get('provide/my-questions')
     .then(resp => resp.data)
     .catch(err => {
       //log err if possible
@@ -140,7 +140,7 @@ export function myQuestions(tokenObj) {
 // personal/qna-page (my answers)
 export function myAnswers(tokenObj) {
   return apiInstance(tokenObj)
-    .get('my-answers')
+    .get('provide/my-answers')
     .then(resp => resp.data)
     .catch(err => {
       //log err if possible
@@ -174,11 +174,11 @@ export function myContributions(tokenObj) {
   }
 
   return apiInstance(tokenObj)
-    .get('my-question-per-date-count')
+    .get('provide/my-question-per-date-count')
     .then(resp => {
       let questions = resp.data;
       return apiInstance(tokenObj)
-        .get('my-answer-per-date-count')
+        .get('provide/my-answer-per-date-count')
         .then(resp => makeList(questions, resp.data))
         .catch(err => {
           //log err if possible
