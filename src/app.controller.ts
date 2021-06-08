@@ -7,13 +7,19 @@ import {
   Request,
   HttpStatus,
   Inject,
+  BeforeApplicationShutdown,
+  OnApplicationBootstrap,
 } from '@nestjs/common';
 import { QuestionManagementService } from './question-management/question-management.service';
-import { ClientProxy } from '@nestjs/microservices';
+import { ClientProxy, EventPattern } from '@nestjs/microservices';
 import { timeout } from 'rxjs/operators';
 
+const service_name = 'QUESTION_MANAGEMENT_SERVICE';
+
 @Controller()
-export class AppController {
+export class AppController
+  implements OnApplicationBootstrap, BeforeApplicationShutdown
+{
   private readonly logger = new Logger(AppController.name);
   private readonly status_code = {
     200: { statusCode: 200, message: 'OK' },
@@ -49,22 +55,18 @@ export class AppController {
     return undefined;
   }
 
-  async authenticate(access_token): Promise<any> {
-    let re;
-    this.esb_client
-      .send('authenticate', JSON.stringify({ access_token: access_token }))
+  async authenticate(access_token, access_time): Promise<any> {
+    return this.esb_client
+      .send('authenticate', JSON.stringify({ access_token, access_time }))
       .pipe(timeout(2000))
-      .subscribe(
-        (value: any) => {
-          re = value;
-        },
-        (error) => {
-          this.logger.error(error);
-          re = this.status_code[500];
-        },
-      );
-
-    return re;
+      .toPromise()
+      .then((value) => {
+        return value;
+      })
+      .catch((error) => {
+        this.logger.error(error);
+        return this.status_code[500];
+      });
   }
 
   private static respond(res, data) {
@@ -72,13 +74,41 @@ export class AppController {
       res.statusMessage = data.message;
       res.status(data.statusCode).send();
     } else {
-      res.status(HttpStatus.OK).json(data).send();
+      res.status(HttpStatus.OK).json(data);
     }
   }
 
-  @Post('api/create-question')
+  onApplicationBootstrap() {
+    this.esb_client.emit('service_info', {
+      name: service_name,
+      status: 1,
+    });
+  }
+
+  async beforeApplicationShutdown() {
+    this.logger.warn('Shutting down...');
+    await this.esb_client
+      .emit('service_info', {
+        name: service_name,
+        status: 0,
+      })
+      .toPromise();
+  }
+
+  @EventPattern('healthcheck')
+  healthcheck() {
+    this.esb_client.emit('service_info', {
+      name: service_name,
+      status: 1,
+    });
+  }
+
+  @Post('api/manage/create-question')
   async create_question(@Body() body, @Request() req, @Res() res) {
-    const user = await this.authenticate(AppController.jwt_from_header(req));
+    const user = await this.authenticate(
+      AppController.jwt_from_header(req),
+      Date.now(),
+    );
 
     if ('statusCode' in user) {
       return AppController.respond(res, user);
@@ -91,9 +121,12 @@ export class AppController {
     );
   }
 
-  @Post('api/create-answer')
+  @Post('api/manage/create-answer')
   async create_answer(@Body() body, @Request() req, @Res() res) {
-    const user = await this.authenticate(AppController.jwt_from_header(req));
+    const user = await this.authenticate(
+      AppController.jwt_from_header(req),
+      Date.now(),
+    );
 
     if ('statusCode' in user) {
       return AppController.respond(res, user);
