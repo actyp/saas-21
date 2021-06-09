@@ -10,7 +10,6 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
         name: 'ESB_CLIENT',
         transport: Transport.RMQ,
         options: {
-          //url: 'mqtt://localhost:1883',
           urls: [
             'amqps://jjhwhfuy:6ANsWwfWg-HGgtkFAfx6jV7nfVvvRAn5@cow.rmq2.cloudamqp.com/jjhwhfuy',
           ],
