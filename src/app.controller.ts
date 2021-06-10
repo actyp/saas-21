@@ -57,7 +57,7 @@ export class AppController {
       res.statusMessage = this.microservice_response.message;
       res.status(this.microservice_response.statusCode).send();
     } else {
-      res.status(HttpStatus.OK).json(this.microservice_response).send();
+      res.status(HttpStatus.OK).json(this.microservice_response);
     }
   }
 
@@ -84,11 +84,18 @@ export class AppController {
     body,
     on_complete_callback,
   ) {
+    const yellow_str = (str) => '\x1b[33m' + str + '\x1b[0m';
+    const request_msg = (time_elapsed) =>
+      `Request to ${pattern} +${yellow_str(time_elapsed + 'ms')}`;
+
+    const sent_time = Date.now();
     client
       .send(pattern, JSON.stringify(body))
       .pipe(timeout(2000))
       .subscribe(
         (value: any) => {
+          const recd_time = Date.now();
+          this.logger.log(request_msg(recd_time - sent_time));
           this.microservice_response = value;
         },
         (error) => {
