@@ -108,7 +108,7 @@ export class AppController {
       );
   }
 
-  @Get('refresh')
+  @Get('authenticate/refresh')
   async refresh(@Request() req, @Res() res) {
     return this.client_send(
       this.auth_client,
@@ -119,7 +119,7 @@ export class AppController {
     );
   }
 
-  @Post('login')
+  @Post('authenticate/login')
   async login(@Body() body, @Res() res) {
     return this.client_send(
       this.auth_client,
@@ -130,7 +130,7 @@ export class AppController {
     );
   }
 
-  @Post('logout')
+  @Post('authenticate/logout')
   async logout(@Request() req, @Res() res) {
     return this.client_send(
       this.auth_client,
@@ -141,7 +141,7 @@ export class AppController {
     );
   }
 
-  @Post('signup')
+  @Post('authenticate/signup')
   async signup(@Body() body, @Res() res) {
     return this.client_send(
       this.auth_client,
@@ -152,7 +152,7 @@ export class AppController {
     );
   }
 
-  @Post('create-question')
+  @Post('manage/create-question')
   async create_question(@Body() body, @Request() req, @Res() res) {
     body.access_token = AppController.jwt_from_header(req);
     return this.client_send(
@@ -164,7 +164,7 @@ export class AppController {
     );
   }
 
-  @Post('create-answer')
+  @Post('manage/create-answer')
   async create_answer(@Body() body, @Request() req, @Res() res) {
     body.access_token = AppController.jwt_from_header(req);
     return this.client_send(
@@ -176,7 +176,7 @@ export class AppController {
     );
   }
 
-  @Get('questions')
+  @Get('provide/questions')
   async questions(@Query() query, @Res() res) {
     return this.client_send(
       this.question_provider_client,
@@ -187,7 +187,7 @@ export class AppController {
     );
   }
 
-  @Get('my-questions')
+  @Get('provide/my-questions')
   async my_questions(@Request() req, @Res() res) {
     return this.client_send(
       this.question_provider_client,
@@ -198,7 +198,7 @@ export class AppController {
     );
   }
 
-  @Get('my-answers')
+  @Get('provide/my-answers')
   async my_answers(@Request() req, @Res() res) {
     return this.client_send(
       this.question_provider_client,
@@ -209,7 +209,7 @@ export class AppController {
     );
   }
 
-  @Get('answers-per-question')
+  @Get('provide/answers-per-question')
   async answers_per_question(@Query() query, @Res() res) {
     return this.client_send(
       this.question_provider_client,
@@ -220,7 +220,7 @@ export class AppController {
     );
   }
 
-  @Get('question-per-keyword-count')
+  @Get('provide/question-per-keyword-count')
   async question_per_keyword_count(@Res() res) {
     return this.client_send(
       this.question_provider_client,
@@ -231,7 +231,7 @@ export class AppController {
     );
   }
 
-  @Get('question-per-date-count')
+  @Get('provide/question-per-date-count')
   async question_per_date_count(@Res() res) {
     return this.client_send(
       this.question_provider_client,
@@ -242,7 +242,7 @@ export class AppController {
     );
   }
 
-  @Get('my-question-per-date-count')
+  @Get('provide/my-question-per-date-count')
   async my_question_per_date_count(@Request() req, @Res() res) {
     return this.client_send(
       this.question_provider_client,
@@ -253,7 +253,7 @@ export class AppController {
     );
   }
 
-  @Get('my-answer-per-date-count')
+  @Get('provide/my-answer-per-date-count')
   async my_answer_per_date_count(@Request() req, @Res() res) {
     return this.client_send(
       this.question_provider_client,
