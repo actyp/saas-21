@@ -1,24 +1,28 @@
 @media(max-width: 800px) {
-    p .btn {
+    #showToggle .btn {
         margin-top: 0.5rem;
     }
 
-    div .row {
+    #secChartTableRow {
         display: flex;
         flex-direction: column-reverse;
         padding-top: 2rem;
     }
 
-    .col .recharts-responsive-container {
+    #secChartCol .recharts-responsive-container {
         min-height: 100vh;
     }
 
-    .col table {
+    #secChartTableRow .col table {
         width: 100%!important;
     }
 
-    .recharts-layer .recharts-polar-angle-axis-ticks text {
-        text-anchor: middle;
+    @media(orientation: landscape) {
+        #secChartCol {
+            max-width: 62%;
+            margin-left: auto;
+            margin-right: auto;
+        }
     }
 }
 

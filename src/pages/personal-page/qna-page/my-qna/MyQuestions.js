@@ -51,7 +51,7 @@ export default function MyQuestions() {
 
   return(
     <>
-      <h3 className="text-center mb-4">My Questions</h3>
+      <h3 className="text-center mb-4 page-title">My Questions</h3>
       <LoadingHandler data={questions} loading={loading} text="Loading my questions..." >
         <QuestionColumn
             backBtnText="View all questions"

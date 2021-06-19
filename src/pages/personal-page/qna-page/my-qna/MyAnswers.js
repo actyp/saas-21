@@ -47,7 +47,7 @@ export default function MyAnswers() {
 
   return (
     <>
-      <h3 className="text-center mb-4">My Answers</h3>
+      <h3 className="text-center mb-4 page-title">My Answers</h3>
       <LoadingHandler data={qnaObjList} loading={loading} text="Loading answered questions">
         <QuestionColumn
           backBtnText="View all answered questions"

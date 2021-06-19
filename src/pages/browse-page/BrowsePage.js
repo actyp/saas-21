@@ -105,7 +105,7 @@ export default function BrowsePage() {
 
   return (
     <Col md={5} className="mx-auto mt-4 px-1">
-      <h3 className="text-center mb-4 pt-4">
+      <h3 className="text-center mb-4 pt-4 page-title">
         {selected === null ? "Browse Questions" : "Answer Question"}
       </h3>
       <LoadingHandler data={allQList} loading={loading} text="Loading questions...">

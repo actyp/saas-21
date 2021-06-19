@@ -178,7 +178,7 @@ export default function AskPage() {
 
   return (
     <>
-      <h3 className="text-center mb-5 pt-4"> Ask a question </h3>
+      <h3 className="text-center mb-5 pt-4 page-title"> Ask a question </h3>
       <AskForm
         title={title} setTitle={setTitle}
         text={text} setText={setText}

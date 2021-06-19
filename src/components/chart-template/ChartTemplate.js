@@ -188,25 +188,27 @@ export default function ChartTemplate(props) {
     </tr>
   );
 
+  const tableWidthClass = props.table['valueHeading'].length > 1 ? "w-75" : "w-50";
+
   return (
     <>
       <ResponsiveContainer width="100%" minHeight="75vh">
         {mainChart}
       </ResponsiveContainer>
-      <p className="text-center text-primary">
+      <p id="showToggle" className="text-center text-primary">
         <span>Slide the whole or the blue edges to focus on specific region.</span>
         <Button variant="outline-primary" className="btn-sm ml-3 shadow-none" onClick={() => setIsSynced(!isSynced)}>
           {isSynced ? 'Show all' : 'Sync to table'}
         </Button>
       </p>
-      <Row className="mt-4">
-        <Col>
-          <ResponsiveContainer minWidth="100%" height="100%">
+      <Row className="mt-4" id="secChartTableRow">
+        <Col id="secChartCol">
+          <ResponsiveContainer width="100%" height="70%" minHeight="40vh" className="mt-5">
             {secChart}
           </ResponsiveContainer>
         </Col>
         <Col>
-          <Table striped borderless hover size="sm" className="mx-auto w-50 text-center">
+          <Table striped borderless hover size="sm" className={"mx-auto text-center " + tableWidthClass}>
             <thead>{tableHead}</thead>
             <tbody>{tableRows}</tbody>
           </Table>

@@ -1,6 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Lemonada:wght@500&display=swap');
+
 /* body */
 body {
-  background: rgba(248,249,250,1);
+  background: beige;
 }
 
 /* content */
@@ -9,6 +11,10 @@ body {
   background: beige;
   margin-top: 56px;
   min-height: 86.3vh;
+}
+
+#content .page-title {
+  font-family: 'Lemonada', cursive;
 }
 
 /* disable underline of links on hover */

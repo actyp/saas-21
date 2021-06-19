@@ -45,7 +45,7 @@ export default function ContributionsPage() {
 
   return (
     <>
-      <h3 className="text-center mb-4 pt-4">My daily contributions</h3>
+      <h3 className="text-center mb-4 pt-4 page-title">My daily contributions</h3>
       <LoadingHandler data={data} loading={loading} text="Loading daily contributions...">
         <ChartTemplate
           mainChart = 'bar'
