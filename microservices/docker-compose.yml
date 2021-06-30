@@ -1,0 +1,80 @@
+version: '3.9'
+
+services:
+  front-end:
+    build: ./front-end
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - "./front-end/nginx/nginx_ms.conf:/etc/nginx/conf.d/default.conf"
+      - "./front-end/nginx/letsencrypt:/etc/letsencrypt"
+    networks:
+      - proxy-net
+    depends_on:
+      - orchestrator
+
+  orchestrator:
+    build: ./orchestrator
+    networks:
+      - proxy-net
+
+  auth:
+    build: ./auth
+    networks:
+      - auth-net
+    depends_on:
+      - redis-auth
+
+  redis-auth:
+    image: redis
+    ports:
+      - "6379"
+    volumes:
+      - "./auth/data:/data"
+    networks:
+      - auth-net
+
+  question-management:
+    build: ./question-management
+    networks:
+      - question-management-net
+    depends_on:
+      - redis-question-management
+
+  redis-question-management:
+    image: redis
+    ports:
+      - "6379"
+    volumes:
+      - "./question-management/data:/data"
+    networks:
+      - question-management-net
+      - redis-replica-net
+
+  question-provider:
+    build: ./question-provider
+    networks:
+      - question-provider-net
+    depends_on:
+      - redis-question-provider
+
+  redis-question-provider:
+    image: redis
+    command: redis-server --slaveof redis-question-management 6379
+    ports:
+      - "6379"
+    volumes:
+      - "/question-provider/data:/data"
+    networks:
+      - question-provider-net
+      - redis-replica-net
+    depends_on:
+      - redis-question-management
+
+networks:
+  proxy-net:
+  auth-net:
+  question-management-net:
+  question-provider-net:
+  redis-replica-net:
