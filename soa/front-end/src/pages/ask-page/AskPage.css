@@ -1,0 +1,9 @@
+textarea {
+    max-height: 240px;
+    min-height: 40px;
+    white-space: nowrap;
+}
+
+#alert-box button:focus {
+    outline: none;
+}

@@ -1,0 +1,23 @@
+@import url('https://fonts.googleapis.com/css2?family=Lemonada:wght@500&display=swap');
+
+/* body */
+body {
+  background: beige;
+}
+
+/* content */
+#content {
+  padding-bottom: 2%;
+  background: beige;
+  margin-top: 56px;
+  min-height: 86.3vh;
+}
+
+#content .page-title {
+  font-family: 'Lemonada', cursive;
+}
+
+/* disable underline of links on hover */
+a:hover {
+  text-decoration: none!important;
+}

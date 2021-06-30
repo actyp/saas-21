@@ -1,0 +1,12 @@
+@media (min-width: 576px) {
+    #tools {
+        margin-right: auto;
+        margin-left: auto;
+    }
+}
+
+.navbar-collapse {
+    flex-direction: row;
+    justify-content: space-between;
+    display: flex;
+}

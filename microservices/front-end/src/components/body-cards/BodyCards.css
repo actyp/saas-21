@@ -1,0 +1,30 @@
+@media(max-height: 400px) {
+    .card-deck .card img {
+        height: 200px!important;
+    }
+}
+
+@media(orientation: landscape) and (max-width: 800px) {
+    .card-deck {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .card-deck .card {
+        margin-bottom: 15px;
+    }
+}
+
+.card-deck {
+    padding-top: 4rem;
+    margin-right: 0.1%;
+    margin-left: 0.1%;
+}
+
+.card-deck .card {
+    background: #ecebe3;
+}
+
+.card-deck .card img {
+    height: 300px;
+}
