@@ -102,16 +102,16 @@ export class QuestionManagementService {
   }
 
   async create_answer(data: CreateAnswerDto) {
-    const res = await this.data_layer_request('exists_user', {
-      username: data.username,
-    });
-    if ('statusCode' in res) {
-      return res;
-    } else if (res.exists === 'true') {
+    if (data.question_id === undefined || data.text === undefined) {
       return this.status_code[400];
     }
 
-    if (data.question_id === undefined || data.text === undefined) {
+    const res = await this.data_layer_request('exists_question', {
+      question_id: data.question_id,
+    });
+    if ('statusCode' in res) {
+      return res;
+    } else if (res.exists === 'false') {
       return this.status_code[400];
     }
 
