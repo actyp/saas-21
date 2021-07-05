@@ -110,7 +110,7 @@ export default function AnswerPage(props) {
             username: auth.user.username,
             date: date
           };
-          setAnswerList([...answerList, answer]);
+          setAnswerList([answer, ...answerList]);
           setFailedSubmit(false);
         }
       }
