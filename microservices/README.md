@@ -421,7 +421,7 @@ URL: https://snf-16615.ok-kno.grnetcloud.net/api/provide/my-answer-per-date-coun
 ```bash
 Method: GET
 Type: 
-URL: 
+URL: https://snf-16615.ok-kno.grnetcloud.net/api/provide/my-answers
 ```
 
 
@@ -436,7 +436,7 @@ URL:
 ***More example Requests/Responses:***
 
 
-##### I. Example Request: get answers of the user authenticated by the bearer auth header
+##### I. Example Request: get answers of the user authenticated with the bearer auth header
 
 
 ***Headers:***
@@ -447,7 +447,7 @@ URL:
 
 
 
-##### I. Example Response: get answers of the user authenticated by the bearer auth header
+##### I. Example Response: get answers of the user authenticated with the bearer auth header
 ```js
 [
     {
@@ -565,7 +565,7 @@ URL: https://snf-16615.ok-kno.grnetcloud.net/api/provide/my-questions
 ***More example Requests/Responses:***
 
 
-##### I. Example Request: get questions of the user authenticated by the bearer auth header
+##### I. Example Request: get questions of the user authenticated with the bearer auth header
 
 
 ***Headers:***
@@ -576,7 +576,7 @@ URL: https://snf-16615.ok-kno.grnetcloud.net/api/provide/my-questions
 
 
 
-##### I. Example Response: get questions of the user authenticated by the bearer auth header
+##### I. Example Response: get questions of the user authenticated with the bearer auth header
 ```js
 [
     {
