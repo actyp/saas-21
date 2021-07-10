@@ -40,7 +40,7 @@ In order to use certbot to generate https certificate for your domain follow the
    ```sh
    docker-compose up
    ```
-3. Find _<front-end-container-id>_ in bash2
+3. Find <_front-end-container-id_> in bash2
    ```sh
     docker ps | grep front-end
    ```
