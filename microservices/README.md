@@ -764,7 +764,7 @@ URL: https://snf-16615.ok-kno.grnetcloud.net/api/provide/questions?start=&stop=
 ***More example Requests/Responses:***
 
 
-##### I. Example Request: get questions within a specific range
+##### I. Example Request: get questions within a specific range (questions are in descending chronological order)
 
 
 
@@ -777,7 +777,7 @@ URL: https://snf-16615.ok-kno.grnetcloud.net/api/provide/questions?start=&stop=
 
 
 
-##### I. Example Response: get questions within a specific range
+##### I. Example Response: get questions within a specific range (questions are in descending chronological order)
 ```js
 [
     {
