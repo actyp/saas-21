@@ -5,8 +5,8 @@
 * [Notice](#Notice)
 * [Prerequisites](#Prerequisites)
 * [Installation](#Installation)  
-* [Using Certbot](#Using Certbot)
-* [Persisting Data](#Persisting Data)
+* [Using Certbot](#Using%20Certbot)
+* [Persisting Data](#Persisting%20Data)
 * [Demos](#Demos)
 
 --------
