@@ -5,8 +5,8 @@
 * [Notice](#Notice)
 * [Prerequisites](#Prerequisites)
 * [Installation](#Installation)  
-* [Using Certbot](#Using%20Certbot)
-* [Persisting Data](#Persisting%20Data)
+* [Using-Certbot](#Using-Certbot)
+* [Persisting-Data](#Persisting-Data)
 * [Demos](#Demos)
 
 --------
@@ -42,7 +42,7 @@
    ```
 
 
-## Using Certbot
+## Using-Certbot
 
 Front-end service in each docker-compose.yml comes with a nginx server and certbot installed.
 In order to use certbot to generate https certificate for your domain follow these steps:
@@ -72,7 +72,7 @@ In order to use certbot to generate https certificate for your domain follow the
    The file _docker-compose.yml_ uses the same folder as a volume in order not to create certificates everytime the containers stop and restart.
 
 
-## Persisting Data
+## Persisting-Data
 
 ### General
 
