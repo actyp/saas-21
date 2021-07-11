@@ -2,7 +2,7 @@
 # Implementation with Microservices
 
 Our microservices communicate with the orchestrator via separate
-RabbitMQ Queues, as the latter sends the appropriate messages to
+RabbitMQ Queues, and the latter sends the appropriate messages to
 the microservices, for each HTTP Request it receives.
 
 ![Task screenshot](screenshots/rabbitmq.png)
@@ -436,7 +436,7 @@ URL: https://snf-16615.ok-kno.grnetcloud.net/api/provide/my-answers
 ***More example Requests/Responses:***
 
 
-##### I. Example Request: get answers of the user authenticated with the bearer auth header
+##### I. Example Request: get answers of the user authenticated via the bearer auth header
 
 
 ***Headers:***
@@ -447,7 +447,7 @@ URL: https://snf-16615.ok-kno.grnetcloud.net/api/provide/my-answers
 
 
 
-##### I. Example Response: get answers of the user authenticated with the bearer auth header
+##### I. Example Response: get answers of the user authenticated via the bearer auth header
 ```js
 [
     {
@@ -565,7 +565,7 @@ URL: https://snf-16615.ok-kno.grnetcloud.net/api/provide/my-questions
 ***More example Requests/Responses:***
 
 
-##### I. Example Request: get questions of the user authenticated with the bearer auth header
+##### I. Example Request: get questions of the user authenticated via the bearer auth header
 
 
 ***Headers:***
@@ -576,7 +576,7 @@ URL: https://snf-16615.ok-kno.grnetcloud.net/api/provide/my-questions
 
 
 
-##### I. Example Response: get questions of the user authenticated with the bearer auth header
+##### I. Example Response: get questions of the user authenticated via the bearer auth header
 ```js
 [
     {
@@ -824,39 +824,6 @@ URL: https://snf-16615.ok-kno.grnetcloud.net/api/provide/questions?start=&stop=
         "keywords": [
             "reactjs"
         ]
-    },
-    {
-        "title": "Phoney's ritual football irresponsibility needling trapeze's slobber turntables suspension grounded appalling invasions gruelling planar statutes revels pledged agent",
-        "text": "Shrill acutely kerosene checkers's commissioned reconfigured horns aviation's.",
-        "id": "ZHN0b2dnZWxsMm1AcHJpbnRmcmllbmRseS5jb21bMjAxOS0wOC0zMSAxMzoxMjowMl0=",
-        "username": "dstoggell2m@printfriendly.com",
-        "date": "2019-08-31 13:12:02",
-        "keywords": [
-            "qt",
-            "oop"
-        ]
-    },
-    {
-        "title": "Exporting accidentally petition's cove apparitions lowering premising adroitly demotions levity's projection",
-        "text": "Industrious drudge's vagary's spoil linguistics's radiators magnesium symbolized obituary's complement's rared. Twines triples venison's megaphoned perplexes tendon tutor's pulls snare's. Daises recuperation's wearily volatile matchbook's lumberjack's plaids promulgates practicalities handlebar lyric menu's matts redundancy's paring.",
-        "id": "YWxlc3NtYXJlMXJAYmlibGVnYXRld2F5LmNvbVsyMDE5LTA4LTMxIDExOjA3OjMwXQ==",
-        "username": "alessmare1r@biblegateway.com",
-        "date": "2019-08-31 11:07:30",
-        "keywords": [
-            "session",
-            "wpf",
-            "facebook"
-        ]
-    },
-    {
-        "title": "Circuit machining paws embassy surrendered lunchtime deducted copperheads sentience cancellation squelch's marginal flu crinkle",
-        "text": "Evaporate sniffles predictor flaking fiancé mesdames sensationalism clings fiesta's adept's tinkers.",
-        "id": "Y3RlbmNocUBpbnRlbC5jb21bMjAxOS0wOC0zMCAxNzoyODoxOV0=",
-        "username": "ctenchq@intel.com",
-        "date": "2019-08-30 17:28:19",
-        "keywords": [
-            "iphone"
-        ]
     }
 ]
 ```
@@ -966,4 +933,4 @@ URL: https://snf-16615.ok-kno.grnetcloud.net/api/authenticate/signup
 
 
 ---
-[Back to top](#Indices)
+[Back to top](#implementation-with-microservices)
