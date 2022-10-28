@@ -7,7 +7,7 @@
 * [Installation](#Installation)  
 * [Using Certbot](#Using-Certbot)
 * [Persisting Data](#Persisting-Data)
-* [Demos](#Demos)
+* [Disclaimer](#Disclaimer)
 
 --------
 
@@ -95,14 +95,6 @@ Only data-layer holds the data needed, so the according file is:
 - soa/data-layer/data/dump.rdb
 
 
-## Demos
+## Disclaimer
 
-### Open Sign-in Credentials
-
-- Email: jkacheller27@nationalgeographic.com
-- Password: Qvnbvd7K9
-
-### Links
-
-- [Microservices Demo](https://snf-16615.ok-kno.grnetcloud.net/)
-- [SOA Demo](https://snf-16542.ok-kno.grnetcloud.net/)
+All of usernames and passwords, found in the README files of each architecture, were auto-generated, in order to populate the database and were used for demonstrative purposes only. The github repository does not contain any file with data.
