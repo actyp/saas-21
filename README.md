@@ -27,7 +27,7 @@
 
 1. Clone the repo
    ```sh 
-   git clone https://actyp/saas-21.git
+   git clone https://github.com/actyp/saas-21.git
    ```
 2. Navigate into Microservices or SOA folders
    ```sh 
